@@ -3,6 +3,9 @@
 ### Dependencies ###
 /node_modules
 
+### Build and Compiled ###
+/dist
+
 ### Mac OSX ###
 .DS_Store
 
