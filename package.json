@@ -4,11 +4,14 @@
   "description": "S4M Project Management App",
   "main": "main.js",
   "scripts": {
-    "start": "electron main.js"
+    "start": "electron app/main.js"
   },
   "keywords": [],
   "author": "Mathieu Lapeyre",
   "license": "ISC",
+  "dependencies": {
+    "vue": "^2.1.10"
+  },
   "devDependencies": {
     "electron": "^1.4.15"
   }
