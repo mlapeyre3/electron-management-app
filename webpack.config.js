@@ -21,12 +21,16 @@ module.exports = {
           presets: ['es2015']
         },
         exclude: /node_modules/
+      },
+      {
+        test: /\.(jpeg|png|gif|svg)$/,
+        loader: "file-loader?name=[name].[ext]"
       }
     ]
   },
   resolve: {
     alias: {
-      'vue$': 'vue/dist/vue.common.js'
+      'vue$': 'vue/dist/vue.common.js',
     }
   }
 }
