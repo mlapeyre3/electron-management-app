@@ -1,5 +1,25 @@
 <template>
     <div class="welcome">
+        <div class="ui card">
+            <div class="ui image">
+                <img :src="userAvatarUrl">
+            </div>
+            <div class="content">
+                <a class="header">Mathieu Lapeyre</a>
+                <div class="meta">
+                    <span class="date">Joined in 2016</span>
+                </div>
+                <div class="description">
+                    Mathieu Lapeyre is a Project Manager.
+                </div>
+            </div>
+            <div class="extra content">
+                <a>
+                    <i class="user icon"></i>
+                    22 Friends
+                </a>
+            </div>
+        </div>
         <div class="ui centered grid">
             <div class="row">
                 <p>This is where the S4M logo should be</p>
@@ -21,9 +41,6 @@
                 </div>
             </div>
         </div>
-        <div>
-            {{ users }}
-        </div>
     </div>
 </template>
 
@@ -31,18 +48,30 @@
   export default {
     data () {
       return {
-        users: []
+        userAvatarUrl: ""
       }
     },
     mounted () {
-      this.$http.get('http://jsonplaceholder.typicode.com/users').then(response => {
+      var email = "mathieu.lapeyre@s4m.io"
+      var pwd = 'Rendsmoimesinfos0'
 
-        // get body data
-        this.users = response.body;
+      var base64Auth = btoa(email + ':' + pwd)
+
+      var options = {
+        url: 'https://mediaconnect.atlassian.net/wiki/rest/api/user/current',
+        method: 'GET',
+        headers:
+          {
+            Authorization: 'Basic ' + base64Auth
+          }
+      }
+      this.$http(options).then((response) => {
         console.log(response)
-
+        // get body data
+        this.userAvatarUrl = "https://mediaconnect.atlassian.net"+ response.body.profilePicture.path
+        //this.userAvatarUrl = 'https://mediaconnect.atlassian.net' + '/wiki/download/attachments/114851976/user-avatar'
       }, response => {
-        // error callback
+        console.log(response)
       });
     }
   }
