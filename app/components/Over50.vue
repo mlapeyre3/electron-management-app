@@ -16,29 +16,37 @@
       }
     },
     mounted () {
-      var email = "mathieu.lapeyre@s4m.io"
-      var pwd = 'Rendsmoimesinfos0'
-
-      var base64Auth = btoa(email + ':' + pwd)
-
-      var options = {
-        //url: 'https://mediaconnect.atlassian.net/wiki/rest/api/user/current',
-        url: 'https://mediaconnect.atlassian.net/rest/gadget/1.0/issueTable/filter?num=20&tableContext=jira.table.cols.dashboard&addDefault=false&columnNames=issuetype&columnNames=issuekey&columnNames=status&columnNames=summary&columnNames=priority&columnNames=progress&columnNames=timeoriginalestimate&columnNames=timeestimate&columnNames=timespent&columnNames=workratio&enableSorting=true&paging=true&showActions=true&filterId=15800&sortBy=workratio%3ADESC&startIndex=0&_=1487616044846',
-        method: 'GET',
-        headers:
-          {
-            Authorization: 'Basic ' + base64Auth
-          }
+      if(!this.getCurrentFilter()){
+        this.getCurrentFilter()
       }
-      this.$http(options).then((response) => {
+    },
+    methods: {
+      getCurrentFilter: function () {
+        var email = "mathieu.lapeyre@outlook.fr"
+        var pwd = 'IloveS4M$'
 
-        // get body data
-        this.over50issues = response.body.table
-        console.log(response)
+        var base64Auth = btoa(email + ':' + pwd)
 
-      }, response => {
-        console.log(response)
-      });
+        var options = {
+          //url: 'https://mediaconnect.atlassian.net/wiki/rest/api/user/current',
+          url: 'https://mathieulapeyre.atlassian.net/rest/api/2/filter/my',
+          method: 'GET',
+          headers:
+            {
+              Authorization: 'Basic ' + base64Auth
+            }
+        }
+        this.$http(options).then((response) => {
+
+          // get body data
+          this.over50issues = response.body
+          return true
+
+        }, response => {
+          console.log('NOK')
+          return false
+        });
+      }
     }
   }
 </script>
