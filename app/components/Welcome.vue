@@ -39,6 +39,7 @@
       }
     },
     mounted () {
+      console.log("Mounted")
       var response
       if(response = Auth.isLogged()){
         this.userAvatarUrl = response

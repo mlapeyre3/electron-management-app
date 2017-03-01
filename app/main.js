@@ -29,7 +29,7 @@ export const router = new VueRouter({
   mode: 'history',
   base: __dirname,
   routes: [
-    { path: '/', name: 'welcome', components: {default: Welcome}},
+    { path: '/', name: 'welcome', components: {default: Welcome}, beforeEnter: requireAuth},
     { path: '/over50', name: 'over50', components: {default: Over50}, beforeEnter: requireAuth},
     { path: '/pageB', name: 'pageB', component: PageB, beforeEnter: requireAuth},
     { path: '/login', name: 'login', component: Login},

@@ -1,4 +1,4 @@
-//import {router} from '../index'
+import {router} from '../main.js'
 
 // Parameters
 const email = 'mathieu.lapeyre@outlook.f'
@@ -56,38 +56,26 @@ export default {
     })
   },*/
 
-  login(context,credentials){
+  login(context,credentials,redirect){
     var options = {
       url: LOGIN_URL,
       method: 'GET',
       headers:
         {
           Authorization: 'Basic ' + btoa(credentials.username + ':' + credentials.password)
+          //this.getAuthHeader()
         }
     }
     context.$http(options).then((response) => {
       this.user.authenticated = true
-      return response
+      localStorage.setItem('credentials',JSON.stringify(credentials))
+      if(redirect){
+        router.push({ path: '/' })
+      }
     }, response => {
-      console.log('Error' + str(response))
       this.user.authenticated = false
       return false
     });
-  },
-
-  signup(context, creds, redirect) {
-    context.$http.post(SIGNUP_URL, creds, (data) => {
-      localStorage.setItem('id_token', data.id_token)
-
-      this.user.authenticated = true
-
-      if(redirect) {
-        router.go(redirect)
-      }
-
-    }).error((err) => {
-      context.error = err
-    })
   },
 
   // To log out, we just need to remove the token
