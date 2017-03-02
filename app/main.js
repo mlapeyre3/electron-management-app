@@ -14,13 +14,11 @@ import Auth from './utils/auth.js'
 
 function requireAuth (to, from, next) {
   if (!Auth.isLogged()) {
-    console.log('Auth: user is not logged in')
     next({
       path: '/login',
       query: { redirect: to.fullPath }
     })
   } else {
-    console.log('Auth: user is logged in')
     next()
   }
 }

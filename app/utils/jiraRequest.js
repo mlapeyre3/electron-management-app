@@ -3,7 +3,7 @@ import Auth from './auth.js'
 // URL and endpoint constants
 const API_URL = 'https://mathieulapeyre.atlassian.net'
 const CURRENT_USER = API_URL + '/rest/api/2/myself'
-const OVER_50 = ''
+const MY_FILTER = API_URL + '/rest/api/2/filter/my'
 
 export default {
   getCurrentUser(context){
@@ -19,7 +19,24 @@ export default {
       console.log(response.body)
       return response.body
     }, response => {
-      return {}
+
+    })
+  },
+
+  getMyFilter(context){
+    var options = {
+      url: MY_FILTER,
+      method: 'GET',
+      headers:
+        {
+          Authorization: 'Basic ' + Auth.getAuthBasic()
+        }
+    }
+    context.$http(options).then((response) => {
+      console.log(response.body)
+      return response.body
+    }, response => {
+
     })
   }
 }

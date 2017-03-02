@@ -1,7 +1,6 @@
 <template>
     <div class="welcome">
         <a class="ui massive image label">
-            <img :src="currentUser.avatarUrls">
             User
         </a>
 

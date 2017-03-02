@@ -8,6 +8,7 @@
 </template>
 
 <script>
+  import Jira from '../utils/jiraRequest.js'
   export default {
     data () {
       return {
@@ -16,37 +17,11 @@
       }
     },
     mounted () {
-      if(!this.getCurrentFilter()){
-        this.getCurrentFilter()
-      }
+      this.over50issues = Jira.getMyFilter(this)
+      console.log("Finished")
     },
     methods: {
-      getCurrentFilter: function () {
-        var email = "mathieu.lapeyre@outlook.fr"
-        var pwd = 'IloveS4M$'
 
-        var base64Auth = btoa(email + ':' + pwd)
-
-        var options = {
-          //url: 'https://mediaconnect.atlassian.net/wiki/rest/api/user/current',
-          url: 'https://mathieulapeyre.atlassian.net/rest/api/2/filter/my',
-          method: 'GET',
-          headers:
-            {
-              Authorization: 'Basic ' + base64Auth
-            }
-        }
-        this.$http(options).then((response) => {
-
-          // get body data
-          this.over50issues = response.body
-          return true
-
-        }, response => {
-          console.log('NOK')
-          return false
-        });
-      }
     }
   }
 </script>
