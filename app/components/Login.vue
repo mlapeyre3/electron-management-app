@@ -21,11 +21,11 @@
                             <input type="password" name="password" placeholder="Password" v-model="credentials.password">
                         </div>
                     </div>
-                    <button class="ui fluid large teal submit button" @click="submit()">Login</button>
+                    <button class="ui fluid large teal submit button" @click="submit()" v-bind:class="{ loading: isLoading }">Login</button>
                 </div>
-
-                <div class="ui error message"></div>
-
+            </div>
+            <div class="ui error message" v-show="error">
+                Sorry, the member name and password you entered do not match. Please try again.
             </div>
         </div>
     </div>
@@ -42,10 +42,14 @@
           username: '',
           password: ''
         },
-        error: ''
+        error: false,
+        isLoading: false
       }
     },
     mounted () {
+      this.error = false
+      this.isLoading = false
+      console.log("Mounted")
       if(localStorage.getItem('credentials')){
         let tmpCredentials = JSON.parse(localStorage.getItem('credentials'))
         this.credentials.username = tmpCredentials.username
@@ -54,11 +58,8 @@
     },
     methods: {
       submit() {
-        var credentials = {
-          username: this.credentials.username,
-          password: this.credentials.password
-        }
-        Auth.login(this, credentials, 'welcome')
+        this.isLoading = true
+        Auth.login(this, this.credentials, 'welcome')
       }
     }
 
