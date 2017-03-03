@@ -3,7 +3,7 @@
         <h1 class="ui header">
             This section shows you issues that have exceeded 5O% of the initial estimation.
         </h1>
-        <div v-html="over50issues"></div>
+        <p>{{over50issues}}</p>
     </div>
 </template>
 
@@ -17,8 +17,11 @@
       }
     },
     mounted () {
-      this.over50issues = Jira.getMyFilter(this)
-      console.log("Finished")
+      //this.over50issues = Jira.getMyFilter(this)
+      //console.log("Finished")
+      Jira.getMyFilter(this).then((response) => {
+        this.over50issues = response.body
+      })
     },
     methods: {
 

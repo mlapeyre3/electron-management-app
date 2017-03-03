@@ -15,12 +15,7 @@ export default {
           Authorization: 'Basic ' + Auth.getAuthBasic()
         }
     }
-    context.$http(options).then((response) => {
-      console.log(response.body)
-      return response.body
-    }, response => {
-
-    })
+    return context.$http(options)
   },
 
   getMyFilter(context){
@@ -32,11 +27,6 @@ export default {
           Authorization: 'Basic ' + Auth.getAuthBasic()
         }
     }
-    context.$http(options).then((response) => {
-      console.log(response.body)
-      return response.body
-    }, response => {
-
-    })
+    return context.$http(options)
   }
 }

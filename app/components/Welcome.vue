@@ -1,7 +1,9 @@
 <template>
     <div class="welcome">
         <a class="ui massive image label">
+            <img class="ui image" :src="currentUser.avatarUrls.16x16"
             User
+            <p>{{currentUser}}</p>
         </a>
 
 
@@ -41,9 +43,9 @@
       }
     },
     mounted () {
-      this.currentUser = Jira.getCurrentUser(this)
-
-      console.log(this.currentUser)
+      Jira.getCurrentUser(this).then((response) => {
+        this.currentUser = response.body
+      })
     }
   }
 </script>
