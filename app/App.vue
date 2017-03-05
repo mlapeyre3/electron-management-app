@@ -23,3 +23,9 @@
   }
 
 </script>
+
+<style>
+    .pusher {
+        width: calc(100% - 180px);
+    }
+</style>

@@ -1,15 +1,14 @@
 <template>
     <div class="welcome">
-        <a class="ui massive image label">
-            <img class="ui image" :src="currentUser.avatarUrls.16x16"
-            User
-            <p>{{currentUser}}</p>
-        </a>
-
-
         <div class="ui centered grid">
-            <div class="row">
-                <p>This is where the logo should be</p>
+            <div class="four column row">
+                <div class="right floated column">
+                    <div class="ui card">
+                        <div class="content">
+                            <img class="ui avatar image" :src="currentUser.avatar"> {{ currentUser.displayName }}
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="row">
                 <div class="four wide column">
@@ -39,13 +38,29 @@
   export default {
     data () {
       return {
-        currentUser: {}
+        currentUser: {
+          active: false,
+          avatar: '',
+          displayName: 'toto',
+          emailAddress: '',
+          key: '',
+          self: '',
+          timezone: ''
+        }
       }
     },
     mounted () {
       Jira.getCurrentUser(this).then((response) => {
-        this.currentUser = response.body
+        this.fetchCurrentUser(response.body)
       })
+    },
+    methods: {
+      fetchCurrentUser: function (data) {
+        this.currentUser.active = data.active
+        this.currentUser.avatar = data.avatarUrls["16x16"]
+        this.currentUser.displayName = data.displayName
+        this.currentUser.emailAddress = data.emailAddress
+      }
     }
   }
 </script>

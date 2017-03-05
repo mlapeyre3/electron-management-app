@@ -49,7 +49,6 @@
     mounted () {
       this.error = false
       this.isLoading = false
-      console.log("Mounted")
       if(localStorage.getItem('credentials')){
         let tmpCredentials = JSON.parse(localStorage.getItem('credentials'))
         this.credentials.username = tmpCredentials.username
