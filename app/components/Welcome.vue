@@ -1,5 +1,6 @@
 <template>
     <div class="welcome">
+        <br>
         <div class="ui centered grid">
             <div class="four column row">
                 <div class="right floated column">
@@ -8,6 +9,14 @@
                             <img class="ui avatar image" :src="currentUser.avatar"> {{ currentUser.displayName }}
                         </div>
                     </div>
+                </div>
+            </div>
+            <div class="four column row">
+                <div class="nine wide column">
+                    <h2 class="ui image header">
+                        <img src="./../assets/S4M_logo.png" class="image">
+                        <p>Welcome. Please choose a category.</p>
+                    </h2>
                 </div>
             </div>
             <div class="row">
@@ -22,10 +31,10 @@
             </div>
             <div class="row">
                 <div class="four wide column">
-                    <p>Hello 4</p>
+                    <p>Hello 3</p>
                 </div>
                 <div class="four wide column">
-                    <p>Hello 5</p>
+                    <p>Hello 4</p>
                 </div>
             </div>
         </div>

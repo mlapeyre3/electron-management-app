@@ -85,7 +85,7 @@
 
         var comment = `Automatic message.
         (!) Warning, this issue has been estimated to ${this.$options.filters.formatTimeToDayHour(over50issue.fields.timeoriginalestimate)} and you have spent ${this.$options.filters.formatTimeToDayHour(over50issue.fields.timespent)}.
-        (?) [${over50issue.fields.assignee.key}] are you still confident with this estimation ?`
+        (?) [~${over50issue.fields.assignee.key}] are you still confident with this estimation ?`
 
         Jira.postComment(this, over50issue.id, comment).then((response) => {
           this.isLoading = false
