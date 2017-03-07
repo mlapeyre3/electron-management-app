@@ -3,7 +3,7 @@
         <div class="ui thin sidebar left inverted vertical menu visible">
             <router-link :to="{name: 'welcome'}" class="item"><i class="home icon"></i>Welcome</router-link>
             <router-link :to="{name: 'over50'}" class="item"><i class="alarm icon"></i>Over50% Issues</router-link>
-            <router-link :to="{name: 'pageB'}" class="item">PageB</router-link>
+            <router-link :to="{name: 'dailyStandUp'}" class="item"><i class="checked calendar icon"></i>Daily Stand Up</router-link>
             <router-link :to="{name: 'login'}" class="item">Login</router-link>
         </div>
         <div class="pusher">

@@ -8,7 +8,7 @@ const JQL_SEARCH = API_URL + '/search'
 
 export default {
   getCurrentUser(context){
-    var options = {
+    let options = {
       url: CURRENT_USER,
       method: 'GET',
       headers:
@@ -20,7 +20,7 @@ export default {
   },
 
   getMyFilter(context){
-    var options = {
+    let options = {
       url: MY_FILTER,
       method: 'GET',
       headers:
@@ -32,7 +32,7 @@ export default {
   },
 
   getOver50Issues(context) {
-    var jqlConfig = {
+    let jqlConfig = {
       "jql": "project = FUS AND sprint in openSprints() AND workratio >= 50",
       "startAt": 0,
       "maxResults": 15,
@@ -54,11 +54,11 @@ export default {
   },
 
   postComment(context, issueId, comment) {
-    var commentConfig = {
+    let commentConfig = {
       body: comment
     }
 
-    var options = {
+    let options = {
       url: API_URL + '/issue/' + issueId + '/comment',
       body: JSON.stringify(commentConfig),
       method: 'POST',
@@ -71,7 +71,7 @@ export default {
   },
 
   jqlSearch(context, jqlConfig) {
-    var options = {
+    let options = {
       url: JQL_SEARCH,
       body: jqlConfig,
       method: 'POST',
