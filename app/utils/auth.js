@@ -2,7 +2,6 @@ import {router} from '../main.js'
 
 // URL and endpoint constants
 const API_URL = 'https://mathieulapeyre.atlassian.net'
-//const LOGIN_URL = API_URL + '/wiki/rest/api/user/current'
 const LOGIN_URL = API_URL + '/rest/api/2/myself'
 
 export default {

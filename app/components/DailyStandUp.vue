@@ -55,6 +55,20 @@
                 </tbody>
             </table>
         </div>
+
+        <div class="ui message">
+            <div class="header">
+                The selected page template
+            </div>
+            <div v-html="rawHtml" id="toto"></div>
+        </div>
+
+        <div class="ui message">
+            <div class="header">
+                The targeted page template
+            </div>
+            <div v-html="rawHtmlTarget" id="target"></div>
+        </div>
     </div>
 </template>
 
@@ -65,14 +79,16 @@
     data () {
       return {
         contentSearch: {
-          spaceKey: '',
-          title: '',
+          spaceKey: 'PM',
+          title: 'FUSIO - 2017-03-06',
           type: 'page'
         },
         pageContents: [],
         nbContents: 0,
         isLoading: false,
-        isFound: true
+        isFound: true,
+        rawHtml: '',
+        rawHtmlTarget: '',
       }
     },
 
@@ -98,7 +114,18 @@
       },
 
       createDailyContent(templateContent) {
-        console.log(templateContent)
+        this.rawHtml = templateContent.body.storage.value
+
+        console.log(document.getElementById("toto"))
+
+        var rawHtml = document.getElementById("toto")
+
+        var tableList = rawHtml.getElementsByTagName("table")
+
+        console.log(tableList)
+        console.log(tableList.length)
+
+
       }
     }
   }
