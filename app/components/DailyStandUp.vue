@@ -19,7 +19,7 @@
                 <div class="header">Not found</div>
                 <p>We found no pages which match your request.</p>
             </div>
-            <div class="ui teal submit button" @click="submit()" v-bind:class="{ loading: isLoading }">Search</div>
+            <div class="ui teal submit button" @click="searchDailyContent()" v-bind:class="{ loading: isLoading }">Search</div>
         </form>
 
         <br>
@@ -49,26 +49,21 @@
                         {{contentSearch.spaceKey}}
                     </td>
                     <td>
-                        <button class="ui fluid mini teal submit button" @click="createDailyContent(pageContent)" v-bind:class="{ loading: isLoading }">Create Daily</button>
+                        <button class="ui fluid mini teal submit button" @click="setDailyTemplate(pageContent)" v-bind:class="{ loading: isLoading }">Set as template</button>
                     </td>
                 </tr>
                 </tbody>
             </table>
         </div>
 
-        <div class="ui message">
+        <div v-show="isSelectedTemplate" class="ui message">
             <div class="header">
                 The selected page template
             </div>
-            <div v-html="rawHtml" id="toto"></div>
+            <div v-html="rawHtmlTemplate" id="rawHtmlTemplate"></div>
         </div>
 
-        <div class="ui message">
-            <div class="header">
-                The targeted page template
-            </div>
-            <div v-html="rawHtmlTarget" id="target"></div>
-        </div>
+        <div v-show="isSelectedTemplate" class="ui teal submit button" @click="createDailyContent()" v-bind:class="{ loading: isLoading }">Create</div>
     </div>
 </template>
 
@@ -83,17 +78,22 @@
           title: 'FUSIO - 2017-03-06',
           type: 'page'
         },
+        contentSet: {
+          spaceKey: 'PM',
+          title: 'FUSIO - 2017-03-08',
+          type: 'page'
+        },
         pageContents: [],
         nbContents: 0,
         isLoading: false,
         isFound: true,
-        rawHtml: '',
-        rawHtmlTarget: '',
+        isSelectedTemplate: false,
+        rawHtmlTemplate: '',
       }
     },
 
     methods: {
-      submit() {
+      searchDailyContent() {
         this.isLoading = true
         this.isFound = true
         this.nbContents = 0
@@ -102,30 +102,43 @@
         })
       },
 
-      fetchDailyContent(data){
+      fetchDailyContent(data) {
         if(data.size == 0){
           this.isFound = false
           return
         }
-
         this.nbContents = data.size
         this.pageContents = data.results
         this.isLoading = false
       },
 
-      createDailyContent(templateContent) {
-        this.rawHtml = templateContent.body.storage.value
+      setDailyTemplate(templateContent) {
+        this.rawHtmlTemplate = templateContent.body.storage.value
+        console.log(this.rawHtmlTemplate)
+        this.isSelectedTemplate = true
+        var dailyTableList = document.getElementById("rawHtmlTemplate").getElementsByTagName("table")
+        var _this = this;
 
-        console.log(document.getElementById("toto"))
+        //Trick to let wait for the DOM to be loaded
+        setTimeout(function() {
+          if(dailyTableList.length != 1){
+            console.log("We found several daily table in your template")
+            return
+          }
+          _this.switchDailyTable(dailyTableList[0])
+        }, 0);
+      },
 
-        var rawHtml = document.getElementById("toto")
+      switchDailyTable(dailyTable) {
+        for (var i = 1; i < dailyTable.rows.length; i++){
+          dailyTable.rows.item(i).cells.item(1).innerHTML = dailyTable.rows.item(i).cells.item(2).innerHTML
+          dailyTable.rows.item(i).cells.item(2).innerHTML = ""
+        }
+      },
 
-        var tableList = rawHtml.getElementsByTagName("table")
-
-        console.log(tableList)
-        console.log(tableList.length)
-
-
+      createDailyContent(){
+        console.log(this.rawHtmlTemplate)
+        Wiki.createContent(this, this.rawHtmlTemplate)
       }
     }
   }
