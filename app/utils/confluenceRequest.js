@@ -2,14 +2,25 @@ import Auth from './auth.js'
 
 // URL and endpoint constants
 const API_URL = 'https://mathieulapeyre.atlassian.net/wiki/rest/api'
-const CONTENT_SEARCH = API_URL + '/content'
 const CONTENT_CREATE = API_URL + '/content'
+const CONTENT_SEARCH = API_URL + '/content/search'
 
 export default {
+  // Parameters
+  projectList: [
+    {
+      name: 'FUSIO',
+      id: '461003'
+    },
+    {
+      name: 'DPS',
+      id: '461083'
+    }
+  ],
+
   searchContent(context, searchConfig) {
     let searchRequest = {
-      spaceKey: searchConfig.spaceKey,
-      title: searchConfig.title,
+      cql: 'title ~' + '\'' + searchConfig.title + '\'',
       expand: "body.storage"
     }
 

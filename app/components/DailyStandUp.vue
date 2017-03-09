@@ -7,12 +7,14 @@
         <form class="ui form" v-bind:class="{ error: !isFound }">
             <div class="two fields">
                 <div class="field">
-                    <label>Space</label>
-                    <input placeholder="PM" name="spaceKey" type="text" v-model="contentSearch.spaceKey">
+                    <label>Project</label>
+                    <select class="ui fluid search dropdown" name="projectId">
+                        <option v-for="project in projectList" value="project.id">{{project.name}}</option>
+                    </select>
                 </div>
                 <div class="field">
-                    <label>Title</label>
-                    <input placeholder="FUSIO - 2017-03-07" name="title" type="text" v-model="contentSearch.title">
+                    <label>Sprint</label>
+                    <input placeholder="Fusio - 2017-03-07" name="title" type="text" v-model="contentSearch.title">
                 </div>
             </div>
             <div class="ui error message">
@@ -73,6 +75,8 @@
   export default {
     data () {
       return {
+        projectList: Wiki.projectList,
+
         contentSearch: {
           spaceKey: 'PM',
           title: 'FUSIO - 2017-03-06',
