@@ -9,18 +9,19 @@ export default {
   // Parameters
   projectList: [
     {
-      name: 'FUSIO',
+      title: 'FUSIO',
       id: '461003'
     },
     {
-      name: 'DPS',
+      title: 'DPS',
       id: '461083'
     }
   ],
 
   searchContent(context, searchConfig) {
     let searchRequest = {
-      cql: 'title ~' + '\'' + searchConfig.title + '\'',
+      //cql: 'title ~' + '\'' + searchConfig.title + '\'',
+      cql: searchConfig.cql,
       expand: "body.storage"
     }
 

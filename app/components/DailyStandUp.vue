@@ -4,17 +4,19 @@
             This section helps you to retrieve a Daily Stand Up page from yesterday and create the today's one.
         </h3>
 
-        <form class="ui form" v-bind:class="{ error: !isFound }">
+        <form class="ui form" v-bind:class="{ error: !isFound, loading: isLoading}">
             <div class="two fields">
                 <div class="field">
                     <label>Project</label>
-                    <select class="ui fluid search dropdown" name="projectId">
-                        <option v-for="project in projectList" value="project.id">{{project.name}}</option>
+                    <select class="ui fluid search dropdown" v-model="projectId" @change="searchProjectSprint()">
+                        <option v-for="project in projectList" :value="project.id">{{project.title}}</option>
                     </select>
                 </div>
                 <div class="field">
                     <label>Sprint</label>
-                    <input placeholder="Fusio - 2017-03-07" name="title" type="text" v-model="contentSearch.title">
+                    <select class="ui fluid search dropdown" v-model="sprintId" @change="searchSprintContent()">
+                        <option v-for="sprint in sprintList" :value="sprint.id">{{sprint.title}}</option>
+                    </select>
                 </div>
             </div>
             <div class="ui error message">
@@ -76,6 +78,10 @@
     data () {
       return {
         projectList: Wiki.projectList,
+        projectId: Wiki.projectList[0],
+
+        sprintList: [],
+        sprintId: '',
 
         contentSearch: {
           spaceKey: 'PM',
@@ -92,11 +98,39 @@
         isLoading: false,
         isFound: true,
         isSelectedTemplate: false,
-        rawHtmlTemplate: '',
+        rawHtmlTemplate: ''
       }
     },
 
     methods: {
+      searchProjectSprint () {
+        this.isLoading = true
+        var searchConfig = {}
+        var cqlTitle = 'title ~ Sprint'
+        var cqlParent = 'parent = ' + this.projectId
+
+        searchConfig.cql = cqlTitle + ' and ' + cqlParent
+        Wiki.searchContent(this, searchConfig).then((response) => {
+          this.fetchSprintList(response.body)
+          this.isLoading = false
+        })
+      },
+
+      searchSprintContent () {
+        this.isLoading = true
+        var searchConfig = {}
+        var cqlTitle = 'title ~ Sprint'
+        var cqlParent = 'parent = ' + this.projectId
+
+        console.log(Wiki.projectList[0])
+
+        searchConfig.cql = cqlTitle + ' and ' + cqlParent
+        Wiki.searchContent(this, searchConfig).then((response) => {
+          this.fetchDailyContent(response.body)
+          this.isLoading = false
+        })
+      },
+
       searchDailyContent() {
         this.isLoading = true
         this.isFound = true
@@ -104,6 +138,14 @@
         Wiki.searchContent(this, this.contentSearch).then((response) => {
           this.fetchDailyContent(response.body)
         })
+      },
+
+      fetchSprintList (data) {
+        if(data.size == 0){
+          this.isFound = false
+        } else {
+          this.sprintList = data.results
+        }
       },
 
       fetchDailyContent(data) {
