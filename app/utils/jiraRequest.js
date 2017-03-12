@@ -1,10 +1,10 @@
 import Auth from './auth.js'
 
 // URL and endpoint constants
-const API_URL = 'https://mathieulapeyre.atlassian.net/rest/api/2'
-const CURRENT_USER = API_URL + '/myself'
-const MY_FILTER = API_URL + '/my'
-const JQL_SEARCH = API_URL + '/search'
+const API_URL = 'https://mathieulapeyre.atlassian.net/rest/api/2';
+const CURRENT_USER = API_URL + '/myself';
+const MY_FILTER = API_URL + '/my';
+const JQL_SEARCH = API_URL + '/search';
 
 export default {
   getCurrentUser(context){
@@ -15,7 +15,7 @@ export default {
         {
           Authorization: 'Basic ' + Auth.getAuthBasic()
         }
-    }
+    };
     return context.$http(options)
   },
 
@@ -27,7 +27,7 @@ export default {
         {
           Authorization: 'Basic ' + Auth.getAuthBasic()
         }
-    }
+    };
     return context.$http(options)
   },
 
@@ -48,7 +48,7 @@ export default {
         "fixVersions"
       ],
       "fieldsByKeys": false
-    }
+    };
 
     return this.jqlSearch(context,jqlConfig)
   },
@@ -56,7 +56,7 @@ export default {
   postComment(context, issueId, comment) {
     let commentConfig = {
       body: comment
-    }
+    };
 
     let options = {
       url: API_URL + '/issue/' + issueId + '/comment',
@@ -65,7 +65,7 @@ export default {
       headers: {
         Authorization: 'Basic ' + Auth.getAuthBasic()
       }
-    }
+    };
 
     return context.$http(options)
   },
@@ -78,7 +78,7 @@ export default {
       headers: {
         Authorization: 'Basic ' + Auth.getAuthBasic()
       }
-    }
+    };
 
     return context.$http(options)
   }

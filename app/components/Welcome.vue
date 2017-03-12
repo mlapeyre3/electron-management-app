@@ -65,9 +65,9 @@
     },
     methods: {
       fetchCurrentUser: function (data) {
-        this.currentUser.active = data.active
-        this.currentUser.avatar = data.avatarUrls["16x16"]
-        this.currentUser.displayName = data.displayName
+        this.currentUser.active = data.active;
+        this.currentUser.avatar = data.avatarUrls["16x16"];
+        this.currentUser.displayName = data.displayName;
         this.currentUser.emailAddress = data.emailAddress
       }
     }

@@ -73,7 +73,7 @@
     },
     methods: {
       fetchOver50Issues: function (data) {
-        this.over50issues = data.issues
+        this.over50issues = data.issues;
         if(this.over50issues.length > 0) {
           this.commentTemplate = "Automatic message. Warning, this issue has been estimated to xx days and you have \
           spent xx days. Toto are you still confident with this estimation ?"
@@ -81,11 +81,11 @@
       },
 
       submit(over50issue) {
-        this.isLoading = true
+        this.isLoading = true;
 
         var comment = `Automatic message.
         (!) Warning, this issue has been estimated to ${this.$options.filters.formatTimeToDayHour(over50issue.fields.timeoriginalestimate)} and you have spent ${this.$options.filters.formatTimeToDayHour(over50issue.fields.timespent)}.
-        (?) [~${over50issue.fields.assignee.key}] are you still confident with this estimation ?`
+        (?) [~${over50issue.fields.assignee.key}] are you still confident with this estimation ?`;
 
         Jira.postComment(this, over50issue.id, comment).then((response) => {
           this.isLoading = false
@@ -95,13 +95,13 @@
 
     filters: {
       formatTimeToDayHour: function (value){
-        const API_TIME = 60*60
-        const JIRA_DAY = 8
+        const API_TIME = 60*60;
+        const JIRA_DAY = 8;
 
-        var valueHour = (value/API_TIME).toPrecision(3)
+        var valueHour = (value/API_TIME).toPrecision(3);
 
-        var day = Math.floor(valueHour/JIRA_DAY)
-        var hour = valueHour % JIRA_DAY
+        var day = Math.floor(valueHour/JIRA_DAY);
+        var hour = valueHour % JIRA_DAY;
 
         if(hour == 0) {
           return day + ' days'

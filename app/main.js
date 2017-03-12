@@ -2,8 +2,8 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import VueResource from 'vue-resource'
 
-Vue.use(VueRouter)
-Vue.use(VueResource)
+Vue.use(VueRouter);
+Vue.use(VueResource);
 
 import App from './App.vue'
 import Welcome from './components/Welcome.vue'
@@ -33,11 +33,11 @@ export const router = new VueRouter({
     { path: '/login', name: 'login', component: Login},
     { path: '*', redirect: '/'}
   ]
-})
+});
 
 
 new Vue({
   el: '#app',
   router,
   render: h => h(App)
-})
+});

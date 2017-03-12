@@ -1,8 +1,8 @@
 import {router} from '../main.js'
 
 // URL and endpoint constants
-const API_URL = 'https://mathieulapeyre.atlassian.net'
-const LOGIN_URL = API_URL + '/rest/api/2/myself'
+const API_URL = 'https://mathieulapeyre.atlassian.net';
+const LOGIN_URL = API_URL + '/rest/api/2/myself';
 
 export default {
 
@@ -24,22 +24,22 @@ export default {
         {
           Authorization: 'Basic ' + this.getAuthBasic(credentials)
         }
-    }
+    };
     context.$http(options).then((response) => {
-      this.user.authenticated = true
-      localStorage.setItem('credentials',JSON.stringify(credentials))
+      this.user.authenticated = true;
+      localStorage.setItem('credentials',JSON.stringify(credentials));
       if(redirect){
         router.push({ path: '/' })
       }
     }, response => {
-      this.user.authenticated = false
+      this.user.authenticated = false;
       return false
     });
   },
 
   // To log out, we just need to remove the token
   logout() {
-    localStorage.removeItem('id_token')
+    localStorage.removeItem('id_token');
     this.user.authenticated = false
   },
 

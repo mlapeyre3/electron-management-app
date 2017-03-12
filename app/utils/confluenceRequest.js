@@ -1,9 +1,9 @@
 import Auth from './auth.js'
 
 // URL and endpoint constants
-const API_URL = 'https://mathieulapeyre.atlassian.net/wiki/rest/api'
-const CONTENT_CREATE = API_URL + '/content'
-const CONTENT_SEARCH = API_URL + '/content/search'
+const API_URL = 'https://mathieulapeyre.atlassian.net/wiki/rest/api';
+const CONTENT_CREATE = API_URL + '/content';
+const CONTENT_SEARCH = API_URL + '/content/search';
 
 export default {
   // Parameters
@@ -20,10 +20,9 @@ export default {
 
   searchContent(context, searchConfig) {
     let searchRequest = {
-      //cql: 'title ~' + '\'' + searchConfig.title + '\'',
-      cql: searchConfig.cql,
+      cql: searchConfig.cql + ' order by created desc',
       expand: "body.storage"
-    }
+    };
 
     let options = {
       url: CONTENT_SEARCH,
@@ -32,7 +31,7 @@ export default {
       headers: {
         Authorization: 'Basic ' + Auth.getAuthBasic()
       }
-    }
+    };
 
     return context.$http(options)
   },
@@ -43,14 +42,15 @@ export default {
       space: {
         key: "PM"
       },
-      title: "Test Daily API",
+      title: createConfig.title,
+      ancestors: [{"id":createConfig.parent}],
       body: {
         storage: {
-          value: createConfig,
+          value: createConfig.content,
           representation: "storage"
         }
       }
-    }
+    };
 
     let options = {
       url: CONTENT_CREATE,
@@ -59,7 +59,7 @@ export default {
       headers: {
         Authorization: 'Basic ' + Auth.getAuthBasic()
       }
-    }
+    };
 
     return context.$http(options)
   }

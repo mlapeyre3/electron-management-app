@@ -1,4 +1,4 @@
-var path = require('path')
+var path = require('path');
 
 module.exports = {
   // This is the "main" file which should include all other modules
@@ -36,4 +36,4 @@ module.exports = {
       'vue$': 'vue/dist/vue.common.js',
     }
   }
-}
+};

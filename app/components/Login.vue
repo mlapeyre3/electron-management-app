@@ -47,17 +47,17 @@
       }
     },
     mounted () {
-      this.error = false
-      this.isLoading = false
+      this.error = false;
+      this.isLoading = false;
       if(localStorage.getItem('credentials')){
-        let tmpCredentials = JSON.parse(localStorage.getItem('credentials'))
-        this.credentials.username = tmpCredentials.username
+        let tmpCredentials = JSON.parse(localStorage.getItem('credentials'));
+        this.credentials.username = tmpCredentials.username;
         this.credentials.password = tmpCredentials.password
       }
     },
     methods: {
       submit() {
-        this.isLoading = true
+        this.isLoading = true;
         Auth.login(this, this.credentials, 'welcome')
       }
     }
