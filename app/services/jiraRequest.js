@@ -1,7 +1,8 @@
 import Auth from './auth.js'
 
 // URL and endpoint constants
-const API_URL = 'https://mathieulapeyre.atlassian.net/rest/api/2';
+//const API_URL = 'https://mathieulapeyre.atlassian.net/rest/api/2';
+const API_URL = 'https://mediaconnect.atlassian.net/rest/api/2';
 const CURRENT_USER = API_URL + '/myself';
 const MY_FILTER = API_URL + '/my';
 const JQL_SEARCH = API_URL + '/search';

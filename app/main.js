@@ -10,7 +10,7 @@ import Welcome from './components/Welcome.vue'
 import Over50 from './components/Over50.vue'
 import DailyStandUp from './components/DailyStandUp.vue'
 import Login from './components/Login.vue'
-import Auth from './utils/auth.js'
+import Auth from './services/auth.js'
 
 function requireAuth (to, from, next) {
   if (!Auth.isLogged()) {

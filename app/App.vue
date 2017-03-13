@@ -13,7 +13,7 @@
 </template>
 
 <script>
-  import Auth from './utils/auth.js'
+  import Auth from './services/auth.js'
   export default {
     data () {
       return {

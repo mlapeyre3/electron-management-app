@@ -1,7 +1,8 @@
 import {router} from '../main.js'
 
 // URL and endpoint constants
-const API_URL = 'https://mathieulapeyre.atlassian.net';
+//const API_URL = 'https://mathieulapeyre.atlassian.net';
+const API_URL = 'https://mediaconnect.atlassian.net';
 const LOGIN_URL = API_URL + '/rest/api/2/myself';
 
 export default {
@@ -25,15 +26,18 @@ export default {
           Authorization: 'Basic ' + this.getAuthBasic(credentials)
         }
     };
+
     context.$http(options).then((response) => {
       this.user.authenticated = true;
       localStorage.setItem('credentials',JSON.stringify(credentials));
+      context.isLoading = false;
       if(redirect){
         router.push({ path: '/' })
       }
     }, response => {
       this.user.authenticated = false;
-      return false
+      context.error = true;
+      context.isLoading = false;
     });
   },
 

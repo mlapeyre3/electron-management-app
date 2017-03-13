@@ -56,7 +56,7 @@
 </template>
 
 <script>
-  import Jira from '../utils/jiraRequest.js'
+  import Jira from '../services/jiraRequest.js'
   export default {
     data () {
       return {

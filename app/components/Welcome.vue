@@ -6,7 +6,7 @@
                 <div class="right floated column">
                     <div class="ui card">
                         <div class="content">
-                            <img class="ui avatar image" :src="currentUser.avatar"> {{ currentUser.displayName }}
+                            <img class="ui avatar image" :src="currentUser.avatar"> {{ currentUser.name }}
                         </div>
                     </div>
                 </div>
@@ -42,20 +42,14 @@
 </template>
 
 <script>
-  import Auth from '../utils/auth.js'
-  import Jira from '../utils/jiraRequest.js'
+  import User from '../models/User.js'
+  import Auth from '../services/auth.js'
+  import Jira from '../services/jiraRequest.js'
+
   export default {
     data () {
       return {
-        currentUser: {
-          active: false,
-          avatar: '',
-          displayName: 'toto',
-          emailAddress: '',
-          key: '',
-          self: '',
-          timezone: ''
-        }
+        currentUser: new User(false)
       }
     },
     mounted () {
@@ -66,9 +60,9 @@
     methods: {
       fetchCurrentUser: function (data) {
         this.currentUser.active = data.active;
-        this.currentUser.avatar = data.avatarUrls["16x16"];
-        this.currentUser.displayName = data.displayName;
-        this.currentUser.emailAddress = data.emailAddress
+        this.currentUser.avatar = data.avatarUrls["48x48"];
+        this.currentUser.name = data.displayName;
+        this.currentUser.emailAddress = data.emailAddress;
       }
     }
   }

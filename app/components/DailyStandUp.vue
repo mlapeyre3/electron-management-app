@@ -84,7 +84,7 @@
 </template>
 
 <script>
-  import Wiki from '../utils/confluenceRequest.js'
+  import Wiki from '../services/confluenceRequest.js'
 
   export default {
     data () {
