@@ -7,7 +7,7 @@ Vue.use(VueResource);
 
 import App from './App.vue'
 import Welcome from './components/Welcome.vue'
-import Over50 from './components/Over50.vue'
+import WarningIssues from './components/WarningIssues.vue'
 import DailyStandUp from './components/DailyStandUp.vue'
 import Login from './components/Login.vue'
 import Auth from './services/auth.js'
@@ -28,7 +28,7 @@ export const router = new VueRouter({
   base: __dirname,
   routes: [
     { path: '/', name: 'welcome', components: {default: Welcome}, beforeEnter: requireAuth},
-    { path: '/over50', name: 'over50', components: {default: Over50}, beforeEnter: requireAuth},
+    { path: '/warningIssues', name: 'warningIssues', components: {default: WarningIssues}, beforeEnter: requireAuth},
     { path: '/dailyStandUp', name: 'dailyStandUp', component: DailyStandUp, beforeEnter: requireAuth},
     { path: '/login', name: 'login', component: Login},
     { path: '*', redirect: '/'}

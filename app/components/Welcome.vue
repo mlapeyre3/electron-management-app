@@ -13,27 +13,28 @@
             </div>
             <div class="four column row">
                 <div class="nine wide column">
-                    <h2 class="ui image header">
-                        <img src="./../assets/S4M_logo.png" class="image">
+                    <h1 class="ui header">
                         <p>Welcome. Please choose a category.</p>
-                    </h2>
+                    </h1>
                 </div>
             </div>
-            <div class="row">
-                <div class="four wide column">
-                    <router-link :to="{name: 'over50'}" class="item">
-                        <p class="ui card">Check warning issues</p>
+            <div class="four column row">
+                <div class="column">
+                    <router-link :to="{name: 'warningIssues'}" class="item" >
+                        <i class="massive grey alarm outline icon"></i>
                     </router-link>
                 </div>
-                <div class="four wide column">
-                    <p>Hello 2</p>
+                <div class="column">
+                    <router-link :to="{name: 'dailyStandUp'}" class="item" >
+                        <i class="massive grey checked calendar icon"></i>
+                    </router-link>
                 </div>
             </div>
             <div class="row">
-                <div class="four wide column">
+                <div class="column">
                     <p>Hello 3</p>
                 </div>
-                <div class="four wide column">
+                <div class="column">
                     <p>Hello 4</p>
                 </div>
             </div>

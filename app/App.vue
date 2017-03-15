@@ -2,7 +2,7 @@
     <div id="app">
         <div class="ui thin sidebar left inverted vertical menu visible">
             <router-link :to="{name: 'welcome'}" class="item"><i class="home icon"></i>Welcome</router-link>
-            <router-link :to="{name: 'over50'}" class="item"><i class="alarm icon"></i>Over50% Issues</router-link>
+            <router-link :to="{name: 'warningIssues'}" class="item"><i class="alarm icon"></i>Warning Issues</router-link>
             <router-link :to="{name: 'dailyStandUp'}" class="item"><i class="checked calendar icon"></i>Daily Stand Up</router-link>
             <router-link :to="{name: 'login'}" class="item">Login</router-link>
         </div>
@@ -17,7 +17,8 @@
   export default {
     data () {
       return {
-        loggedIn: Auth.isLogged()
+        loggedIn: Auth.isLogged(),
+        background: 'http://fusio.sam4m.com/dist/images/Map-HP-Fusio.svg'
       }
     }
   }
@@ -26,6 +27,8 @@
 
 <style>
     .pusher {
-        width: calc(100% - 180px);
+        width: calc(100% - 150px);
+        height: 100%;
+        padding: 10px;
     }
 </style>
