@@ -32,7 +32,8 @@
             </div>
             <div class="row">
                 <div class="column">
-                    <p>Hello 3</p>
+                    <router-link :to="{name: 'release'}" class="item" >
+                    </router-link>
                 </div>
                 <div class="column">
                     <p>Hello 4</p>

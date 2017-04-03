@@ -4,6 +4,7 @@
             <router-link :to="{name: 'welcome'}" class="item"><i class="home icon"></i>Welcome</router-link>
             <router-link :to="{name: 'warningIssues'}" class="item"><i class="alarm icon"></i>Warning Issues</router-link>
             <router-link :to="{name: 'dailyStandUp'}" class="item"><i class="checked calendar icon"></i>Daily Stand Up</router-link>
+            <router-link :to="{name: 'release'}" class="item"><i class="ship icon"></i>Releases</router-link>
             <router-link :to="{name: 'login'}" class="item">Login</router-link>
         </div>
         <div class="pusher">
@@ -17,8 +18,7 @@
   export default {
     data () {
       return {
-        loggedIn: Auth.isLogged(),
-        background: 'http://fusio.sam4m.com/dist/images/Map-HP-Fusio.svg'
+        loggedIn: Auth.isLogged()
       }
     }
   }
