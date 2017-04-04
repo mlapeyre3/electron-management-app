@@ -48,8 +48,11 @@
                     {{issue.fields.assignee.displayName}}
                 </td>
                 <td>
-                    <p v-if="issue.git">{{issue.git}}</p>
-                    <p v-else>Loading</p>
+                    <div v-for="repository in issue.git">
+                        <p>{{repository.name}}</p>
+                        <p v-for="commit in repository.commits">{{commit.id}}</p>
+                        <br>
+                    </div>
                 </td>
             </tr>
             </tbody>
@@ -60,6 +63,8 @@
 <script>
   import Jira from '../services/jiraRequest.js'
   import JiraDev from '../services/jiraDevRequests.js'
+  import Git from '../services/githubRequest.js'
+
   export default {
     data () {
       return {
@@ -68,7 +73,7 @@
         projectSelected: {},
         versionList: [],
         versionSelected: {},
-        gitBranch: '',
+        gitBranch: [],
         issueList: [],
         isLoading: false,
         isFound: false
@@ -88,16 +93,16 @@
       },
 
       fetchProjectVersions: function(project) {
-        if(project != null){
-          this.isLoading = true;
-          Jira.getProjectVersions(this,project,true,true).then((response) => {
-            this.versionList = response.body;
-            this.isLoading = false;
-            this.removeVersion(this.versionList,true,true);
-          }).catch((response) => {
-            this.isLoading = false;
-          })
-        }
+        if(project != null){this.isLoading = true;
+        Jira.getProjectVersions(this,project,true,true).then((response) => {
+          this.versionList = response.body;
+          this.isLoading = false;
+
+          this.removeVersion(this.versionList,true,true);
+
+        }).catch((response) => {
+          this.isLoading = false;
+        })}
       },
 
       removeVersion: function(versionList,archived,released) {
@@ -120,17 +125,15 @@
       },
 
       fetchIssueGit(issueList){
-        for (let i=0, len=issueList.length; i<len; i++) {
-          console.log(issueList[i].id)
+        for (let i=0;i<issueList.length; i++) {
           JiraDev.getGitDetails(this,issueList[i],"repository").then((response) => {
-            //issueList[i]["git"] = "toto"
-            //console.log(issueList[i]);
             let newValue = this.issueList[i];
-            console.log(response)
-            if(response.body.detail[0].repositories.length > 0) {
-              newValue["git"] = response.body.detail[0].repositories[0].commits[0].id;
+            newValue["git"] = [];
+            if(response.body.detail[0].repositories.length > 0){
+              for (let j=0; j<response.body.detail[0].repositories.length; j++) {
+                newValue["git"][j] = response.body.detail[0].repositories[j]
+              }
             }
-
             this.$set(issueList, i, newValue)
           });
         }
