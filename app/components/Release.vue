@@ -32,6 +32,7 @@
                 <th class="nine wide">Issue</th>
                 <th>Status</th>
                 <th>Assignee</th>
+                <th>Commit</th>
             </tr>
             </thead>
             <tbody>
@@ -39,13 +40,17 @@
                 <td>
                     <img :src="issue.fields.issuetype.iconUrl" class="ui mini rounded left floated image">
                     {{issue.key}} {{issue.fields.summary}}
-                    </td>
+                </td>
                 <td>
                     {{issue.fields.status.name}}
-                    </td>
+                </td>
                 <td>
                     {{issue.fields.assignee.displayName}}
-                    </td>
+                </td>
+                <td>
+                    <p v-if="issue.git">{{issue.git}}</p>
+                    <p v-else>Loading</p>
+                </td>
             </tr>
             </tbody>
         </table>
@@ -54,6 +59,7 @@
 
 <script>
   import Jira from '../services/jiraRequest.js'
+  import JiraDev from '../services/jiraDevRequests.js'
   export default {
     data () {
       return {
@@ -82,22 +88,22 @@
       },
 
       fetchProjectVersions: function(project) {
-        this.isLoading = true;
-        Jira.getProjectVersions(this,project,true,true).then((response) => {
-          this.versionList = response.body;
-          this.isLoading = false;
-          console.log(this.versionList);
-          this.removeVersion(this.versionList,true,true);
-          console.log(this.versionList);
-        }).catch((response) => {
-          this.isLoading = false;
-        })
+        if(project != null){
+          this.isLoading = true;
+          Jira.getProjectVersions(this,project,true,true).then((response) => {
+            this.versionList = response.body;
+            this.isLoading = false;
+            this.removeVersion(this.versionList,true,true);
+          }).catch((response) => {
+            this.isLoading = false;
+          })
+        }
       },
 
       removeVersion: function(versionList,archived,released) {
         for(var i=0; i<versionList.length; i++) {
           if((versionList[i].archived==true && archived==true) || (versionList[i].released==true && released==true)){
-            let removed = versionList.splice(i,1);
+            versionList.splice(i,1);
           }
         }
       },
@@ -106,11 +112,29 @@
         this.isLoading = true;
         Jira.getReleaseIssues(this,project,version).then((response) => {
           this.issueList = response.body.issues;
+          this.issueList["git"] = null;
+          this.fetchIssueGit(this.issueList);
           this.isLoading = false;
           this.isFound = true;
         })
-      }
+      },
 
+      fetchIssueGit(issueList){
+        for (let i=0, len=issueList.length; i<len; i++) {
+          console.log(issueList[i].id)
+          JiraDev.getGitDetails(this,issueList[i],"repository").then((response) => {
+            //issueList[i]["git"] = "toto"
+            //console.log(issueList[i]);
+            let newValue = this.issueList[i];
+            console.log(response)
+            if(response.body.detail[0].repositories.length > 0) {
+              newValue["git"] = response.body.detail[0].repositories[0].commits[0].id;
+            }
+
+            this.$set(issueList, i, newValue)
+          });
+        }
+      }
     }
   }
 </script>
