@@ -49,11 +49,16 @@
                     {{issue.fields.assignee.displayName}}
                 </td>
                 <td>
-                    <div v-for="repository in issue.git">
-                        <p>{{repository.name}}</p>
-                        <div class="ui list" style="height: 60px; overflow: scroll;">
-                            <div v-for="commit in repository.commits" class="item">{{commit.id}}</div>
+                    <div v-if="issue.git">
+                        <div v-for="repository in issue.git">
+                            <p>{{repository.name}}</p>
+                            <div class="ui list" style="height: 60px; overflow: scroll;">
+                                <div v-for="commit in repository.commits" class="item">{{commit.id}}</div>
+                            </div>
                         </div>
+                    </div>
+                    <div v-else>
+                        <i class="notched circle loading icon"></i>
                     </div>
                 </td>
             </tr>
@@ -76,7 +81,6 @@
         versionList: [],
         versionSelected: {},
         branchSelected: '',
-        gitBranch: [],
         issueList: [],
         isLoading: false,
         isFound: false
@@ -132,12 +136,23 @@
           JiraDev.getGitDetails(this,issueList[i],"repository").then((response) => {
             let newValue = this.issueList[i];
             newValue["git"] = [];
-            if(response.body.detail[0].repositories.length > 0){
+
+            if(response.body.detail[0].repositories.length > 0) {
               for (let j=0; j<response.body.detail[0].repositories.length; j++) {
                 newValue["git"][j] = response.body.detail[0].repositories[j]
-                Git.compareBranchHead(this,response.body.detail[0].repositories[j].name,this.branchSelected,response.body.detail[0].repositories[j].commits[0].id);
+
+                for (let k=0; k<response.body.detail[0].repositories[j].commits.length; k++) {
+                  let currentRepo = newValue["git"][j].name;
+                  //ERORR WITH THIS let currentCommit = currentRepo.commits[k];
+                  /*console.log(currentRepo + '' + currentCommit);
+                  Git.compareBranchHead(this,currentRepo,this.branchSelected,currentCommit).then((response) => {
+
+                  })*/
+                }
+
               }
             }
+
             this.$set(issueList, i, newValue)
           });
         }
