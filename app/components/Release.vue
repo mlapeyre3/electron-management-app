@@ -19,7 +19,7 @@
                 </div>
                 <div class="field">
                     <label>Git branch</label>
-                    <input v-model="gitBranch">
+                    <input v-model="branchSelected">
                 </div>
             </div>
             <div class="ui teal submit button" @click="fetchReleaseIssues(projectSelected,versionSelected)" v-bind:class="{ loading: isLoading }">
@@ -33,6 +33,7 @@
                 <th>Status</th>
                 <th>Assignee</th>
                 <th>Commit</th>
+                <th>Branch status</th>
             </tr>
             </thead>
             <tbody>
@@ -50,8 +51,9 @@
                 <td>
                     <div v-for="repository in issue.git">
                         <p>{{repository.name}}</p>
-                        <p v-for="commit in repository.commits">{{commit.id}}</p>
-                        <br>
+                        <div class="ui list" style="height: 60px; overflow: scroll;">
+                            <div v-for="commit in repository.commits" class="item">{{commit.id}}</div>
+                        </div>
                     </div>
                 </td>
             </tr>
@@ -73,6 +75,7 @@
         projectSelected: {},
         versionList: [],
         versionSelected: {},
+        branchSelected: '',
         gitBranch: [],
         issueList: [],
         isLoading: false,
@@ -132,6 +135,7 @@
             if(response.body.detail[0].repositories.length > 0){
               for (let j=0; j<response.body.detail[0].repositories.length; j++) {
                 newValue["git"][j] = response.body.detail[0].repositories[j]
+                Git.compareBranchHead(this,response.body.detail[0].repositories[j].name,this.branchSelected,response.body.detail[0].repositories[j].commits[0].id);
               }
             }
             this.$set(issueList, i, newValue)
