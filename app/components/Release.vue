@@ -61,6 +61,19 @@
                         <i class="notched circle loading icon"></i>
                     </div>
                 </td>
+                <td>
+                    <div v-if="issue.git">
+                        <div v-for="repository in issue.git">
+                            <p>{{repository.name}}</p>
+                            <p>{{repository.status.commitIn}}</p>
+                            <p>{{repository.status.commitsAhead}}</p>
+                            <p>{{repository.status.commitsBehind}}</p>
+                        </div>
+                    </div>
+                    <div v-else>
+                        <i class="notched circle loading icon"></i>
+                    </div>
+                </td>
             </tr>
             </tbody>
         </table>
@@ -139,15 +152,22 @@
 
             if(response.body.detail[0].repositories.length > 0) {
               for (let j=0; j<response.body.detail[0].repositories.length; j++) {
-                newValue["git"][j] = response.body.detail[0].repositories[j]
+                newValue["git"][j] = response.body.detail[0].repositories[j];
+                newValue["git"][j]["status"] = {commitsAhead: 0, commitsBehind: 0, commitIn: null};
+                let currentRepo = newValue["git"][j].name;
 
                 for (let k=0; k<response.body.detail[0].repositories[j].commits.length; k++) {
-                  let currentRepo = newValue["git"][j].name;
-                  //ERORR WITH THIS let currentCommit = currentRepo.commits[k];
-                  /*console.log(currentRepo + '' + currentCommit);
+                  let currentCommit = response.body.detail[0].repositories[j].commits[k].id;
                   Git.compareBranchHead(this,currentRepo,this.branchSelected,currentCommit).then((response) => {
+                    newValue["git"][j]["status"].commitsAhead = newValue["git"][j]["status"].commitsAhead + response.body.ahead_by;
+                    newValue["git"][j]["status"].commitsBehind = newValue["git"][j]["status"].commitsBehind + response.body.behind_by;
 
-                  })*/
+                    if(response.body.status === "diverged" || response.body.status === "ahead") {
+                      newValue["git"][j]["status"].commitIn = false
+                    } else if(response.body.status === "behind" || response.body.status === "identical") {
+                      newValue["git"][j]["status"].commitIn = true
+                    }
+                  })
                 }
 
               }
