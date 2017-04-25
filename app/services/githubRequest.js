@@ -1,7 +1,7 @@
 import Auth from './auth.js'
 
 // URL and endpoint constants
-const GIT_TOKEN = "017704ccb2ef38526067b0f63b5e5c7283a86120";
+const GIT_TOKEN = "";
 //const API_URL = 'https://mathieulapeyre.atlassian.net/rest/api/2';
 const API_URL = 'https://api.github.com';
 const CURRENT_USER = API_URL + '/myself';

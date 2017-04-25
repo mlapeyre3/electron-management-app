@@ -10,6 +10,7 @@ import Welcome from './components/Welcome.vue'
 import WarningIssues from './components/WarningIssues.vue'
 import DailyStandUp from './components/DailyStandUp.vue'
 import Release from './components/Release.vue'
+import Worklog from './components/Worklog.vue'
 import Login from './components/Login.vue'
 import Auth from './services/auth.js'
 
@@ -33,6 +34,7 @@ export const router = new VueRouter({
     { path: '/dailyStandUp', name: 'dailyStandUp', component: DailyStandUp, beforeEnter: requireAuth},
     { path: '/login', name: 'login', component: Login},
     { path: '/release', name: 'release', component: Release, beforeEnter: requireAuth},
+    { path: '/worklog', name: 'worklog', component: Worklog, beforeEnter: requireAuth},
     { path: '*', redirect: '/'}
   ]
 });
