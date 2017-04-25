@@ -14,7 +14,8 @@ export default {
   },
 
   isLogged(){
-    return this.user.authenticated
+    return true
+    //return this.user.authenticated
   },
 
   login(context,credentials,redirect){

@@ -6,6 +6,8 @@ const API_URL = 'https://mediaconnect.atlassian.net/rest/api/2';
 const CURRENT_USER = API_URL + '/myself';
 const MY_FILTER = API_URL + '/my';
 const JQL_SEARCH = API_URL + '/search';
+const PROJECT_LIST = API_URL + '/project';
+const PROJECT_VERSIONS = API_URL +  '/project/{projectIdOrKey}/versions';
 
 export default {
   getCurrentUser(context){
@@ -32,11 +34,60 @@ export default {
     return context.$http(options)
   },
 
+  getProjects(context) {
+    let options = {
+      url: PROJECT_LIST,
+      method: 'GET',
+      headers:
+        {
+          Authorization: 'Basic ' + Auth.getAuthBasic()
+        }
+    };
+    return context.$http(options)
+  },
+
+  getProjectVersions(context,projectKey,released,archived) {
+    let options = {
+      url: PROJECT_VERSIONS.replace('{projectIdOrKey}', projectKey),
+      method: 'GET',
+      headers:
+        {
+          Authorization: 'Basic ' + Auth.getAuthBasic()
+        }
+    };
+    return context.$http(options)
+  },
+
   getOver50Issues(context) {
     let jqlConfig = {
       "jql": "project = FUS AND sprint in openSprints() AND workratio >= 50",
       "startAt": 0,
       "maxResults": 15,
+      "fields": [
+        "issuetype",
+        "priority",
+        "summary",
+        "status",
+        "assignee",
+        "workratio",
+        "timespent",
+        "timeoriginalestimate",
+        "fixVersions"
+      ],
+      "fieldsByKeys": false
+    };
+
+    return this.jqlSearch(context,jqlConfig)
+  },
+
+  getReleaseIssues(context,project,version) {
+    let jql = "project = {projectIdOrKey} AND fixVersion = {versionIdOrKey}";
+    jql = jql.replace('{projectIdOrKey}', project);
+    jql = jql.replace('{versionIdOrKey}', version);
+    let jqlConfig = {
+      "jql": jql,
+      "startAt": 0,
+      "maxResults": 100,
       "fields": [
         "issuetype",
         "priority",
