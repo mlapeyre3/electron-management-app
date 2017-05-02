@@ -251,13 +251,14 @@
             "value": "-1d"
           }
         ],
+        dataTest: [],
         isLoading: false
       }
     },
     mounted () {
       this.fetchUser();
       this.drawChart();
-      console.log(this.userSelected);
+      //this.test();
     },
     methods: {
       fetchUser: function(username) {
@@ -314,6 +315,23 @@
 
       },
 
+      test: function() {
+        d3.json("../assets/data.json", function(error, data) {
+          //var extent = d3.extent(data, function(d) { return d.date; });
+          var extent = d3.extent(data, function(d) { return (
+              d3.extent(d, function(d2) { return d2.values; })
+          )});
+          console.log(extent);
+
+          var min = d3.min(data, function(d) {
+            return d3.min(d.values, function(v) {
+              return v.date;
+            })
+          });
+          console.log(min);
+        });
+      },
+
       drawChart: function() {
         var svg = d3.select("#chart_worklog"),
             margin = {top: 20, right: 80, bottom: 30, left: 50},
@@ -332,9 +350,24 @@
             .x(function(d) { return x(d.date); })
             .y(function(d) { return y(d.temperature); });
 
-        d3.tsv("../assets/data.tsv", type, function(error, data) {
+        d3.json("../assets/data.json", function(error, data) {
+        //d3.tsv("../assets/data.tsv", type, function(error, data) {
           if (error) throw error;
 
+          var cities = data.map(function(d) {
+            return {
+              id: d.id,
+              values: d.values.map(function(v) {
+                return {
+                  date: parseTime(v.date),
+                  temperature: v.temperature
+                }
+              })
+            }
+          });
+
+
+/*
           var cities = data.columns.slice(1).map(function(id) {
             return {
               id: id,
@@ -343,8 +376,18 @@
               })
             };
           });
+*/
 
-          x.domain(d3.extent(data, function(d) { return d.date; }));
+          console.log(cities);
+
+
+
+          //x.domain(d3.extent(data, function(d) { return d.date; }));
+
+          x.domain([
+            d3.min(cities, function(c) { return d3.min(c.values, function(d) { return d.date; }); }),
+            d3.max(cities, function(c) { return d3.max(c.values, function(d) { return d.date; }); })
+          ]);
 
           y.domain([
             d3.min(cities, function(c) { return d3.min(c.values, function(d) { return d.temperature; }); }),
@@ -372,6 +415,8 @@
               .data(cities)
               .enter().append("g")
               .attr("class", "city");
+
+          console.log(city);
 
           city.append("path")
               .attr("class", "line")
