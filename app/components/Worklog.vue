@@ -6,7 +6,7 @@
                 <div class="two fields">
                     <div class="six wide field">
                         <label>Date Range</label>
-                        <multiselect v-model="dateRangeSelected" :options="dateRangeList" track-by="name" label="name" placeholder="Select one" :searchable="false" ></multiselect>
+                        <multiselect v-model="dateRangeSelected" :options="dateRangeList" @input="test()"track-by="name" label="name" placeholder="Select one" :searchable="false" ></multiselect>
                     </div>
                     <div class="field">
                         <label>Check worklog for:</label>
@@ -54,7 +54,7 @@
 
         ],
         userSelected: [
-            {
+            /*{
               "self": "https://mediaconnect.atlassian.net/rest/api/2/user?username=benoitjolly",
               "key": "benoitjolly",
               "name": "benoitjolly",
@@ -198,7 +198,7 @@
               "timeZone": "Europe/Paris",
               "locale": "en_US"
             },
-            {
+            */{
               "self": "https://mediaconnect.atlassian.net/rest/api/2/user?username=simongabet",
               "key": "simongabet",
               "name": "simongabet",
@@ -214,7 +214,7 @@
               "timeZone": "Europe/Paris",
               "locale": "en_US"
             },
-            {
+            /*{
               "self": "https://mediaconnect.atlassian.net/rest/api/2/user?username=valentinmathieu",
               "key": "valentinmathieu",
               "name": "valentinmathieu",
@@ -229,37 +229,47 @@
               "active": true,
               "timeZone": "Europe/Paris",
               "locale": "en_UK"
-            }
+            }*/
         ],
         dateRangeList:[
           {
             "name": "yesterday",
-            "value": "-1d"
+            "value": "-1d",
+            "targetDate": ""
           },
           {
             "name": "last 7 days",
-            "value": "-7d"
+            "value": "-7d",
+            "targetDate": ""
           },
           {
             "name": "last 14 days",
-            "value": "-14d"
+            "value": "-14d",
+            "targetDate": ""
           }
         ],
         dateRangeSelected: [
           {
             "name": "yesterday",
-            "value": "-1d"
+            "value": "-1d",
+            "targetDate": ""
           }
         ],
+        dataTest: [],
         isLoading: false
       }
     },
     mounted () {
       this.fetchUser();
-      this.drawChart();
-      console.log(this.userSelected);
     },
     methods: {
+      test: function() {
+        var someDate = new Date();
+        var numberOfDaysToAdd = 6;
+        this.dateRangeSelected.targetDate = someDate.setDate(someDate.getDate() + numberOfDaysToAdd);
+        console.log(this.dateRangeSelected.targetDate);
+      },
+
       fetchUser: function(username) {
         this.isLoading = true;
         Jira.getUser(this,username).then((response) => {
@@ -279,8 +289,8 @@
             console.log("There are more items than maxReults");
           }
           this.addUserWorklog(worklogAuthor,response.body.issues);
-          this.prepareWorklogChart(worklogAuthor);
           this.isLoading = false;
+          this.prepareWorklogChart(worklogAuthor);
         })
       },
 
@@ -311,10 +321,28 @@
       },
 
       prepareWorklogChart: function(worklogAuthor) {
+        console.log("First", worklogAuthor);
 
+        var parseTime = d3.timeParse("%Y-%m-%dT%H:%M:%S.%L%Z");
+
+        var chartData = worklogAuthor.map(function(data) {
+          return {
+            id: data.displayName,
+            values: data.worklogs.map(function(d) {
+              return {
+                date: parseTime(d.created),
+                temperature: d.timeSpentSeconds
+              }
+            })
+          }
+        });
+
+        console.log("Then",chartData);
+
+        this.drawChart(chartData);
       },
 
-      drawChart: function() {
+      drawChart: function(dataInput) {
         var svg = d3.select("#chart_worklog"),
             margin = {top: 20, right: 80, bottom: 30, left: 50},
             width = svg.attr("width") - margin.left - margin.right,
@@ -331,20 +359,30 @@
             .curve(d3.curveBasis)
             .x(function(d) { return x(d.date); })
             .y(function(d) { return y(d.temperature); });
+        /*
 
-        d3.tsv("../assets/data.tsv", type, function(error, data) {
-          if (error) throw error;
-
-          var cities = data.columns.slice(1).map(function(id) {
+          var cities = data.map(function(d) {
             return {
-              id: id,
-              values: data.map(function(d) {
-                return {date: d.date, temperature: d[id]};
+              id: d.id,
+              values: d.values.map(function(v) {
+                return {
+                  date: parseTime(v.date),
+                  temperature: v.temperature
+                }
               })
-            };
-          });
+            }
+          });*/
 
-          x.domain(d3.extent(data, function(d) { return d.date; }));
+        console.log("ok")
+
+        var cities = dataInput;
+
+          console.log(cities);
+
+          x.domain([
+            d3.min(cities, function(c) { return d3.min(c.values, function(d) { return d.date; }); }),
+            d3.max(cities, function(c) { return d3.max(c.values, function(d) { return d.date; }); })
+          ]);
 
           y.domain([
             d3.min(cities, function(c) { return d3.min(c.values, function(d) { return d.temperature; }); }),
@@ -385,46 +423,6 @@
               .attr("dy", "0.35em")
               .style("font", "10px sans-serif")
               .text(function(d) { return d.id; });
-        });
-
-        function type(d, _, columns) {
-          d.date = parseTime(d.date);
-          for (var i = 1, n = columns.length, c; i < n; ++i) d[c = columns[i]] = +d[c];
-          return d;
-        }
-
-          /*// Define responsive behavior
-           function resize() {
-           var width = parseInt(d3.select("#chart").style("width")) - margin.left - margin.right,
-           height = parseInt(d3.select("#chart").style("height")) - margin.top - margin.bottom;
-
-           // Update the range of the scale with new width/height
-           xScale.range([0, width]);
-           yScale.range([height, 0]);
-
-           // Update the axis and text with the new scale
-           svg.select('.x.axis')
-           .attr("transform", "translate(0," + height + ")")
-           .call(xAxis);
-
-           svg.select('.y.axis')
-           .call(yAxis);
-
-           // Force D3 to recalculate and update the line
-           svg.selectAll('.line')
-           .attr("d", function(d) { return line(d.values); });
-
-           // Update the tick marks
-           xAxis.ticks(Math.max(width/75, 2));
-           yAxis.ticks(Math.max(height/50, 2));
-
-           };
-
-           // Call the resize function whenever a resize event occurs
-           d3.select(window).on('resize', resize);
-
-           // Call the resize function
-           resize();*/
       }
     }
   }
