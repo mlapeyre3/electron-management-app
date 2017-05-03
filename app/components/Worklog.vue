@@ -45,6 +45,7 @@
   import * as d3 from "d3";
   import Multiselect from 'vue-multiselect'
   import User from '../models/User.js'
+  import utils from '../services/utils.js'
 
   export default {
     components: { Multiselect },
@@ -258,9 +259,17 @@
     mounted () {
       this.fetchUser();
       this.drawChart();
+      this.test2();
       //this.test();
     },
     methods: {
+      test2: function() {
+        console.log("START");
+        var value = "-14d";
+        console.log(utils.getDates(new Date("2017-06-05"),null,parseFloat(value.replace(/[^-0-9]/g, ''))));
+        console.log("END");
+      },
+
       fetchUser: function(username) {
         this.isLoading = true;
         Jira.getUser(this,username).then((response) => {
@@ -271,6 +280,7 @@
 
       fetchWorklog: function(dateRange,worklogAuthor) {
         this.isLoading = true;
+        console.log(utils.getDates(new Date(),null,parseFloat(dateRange.value.replace(/[^-0-9]/g, ''))));
         var worklogAuthorList = [];
         for (var i=0; i<worklogAuthor.length; i++) {
           worklogAuthorList.push(worklogAuthor[i].key);
