@@ -6,7 +6,7 @@
                 <div class="two fields">
                     <div class="six wide field">
                         <label>Date Range</label>
-                        <multiselect v-model="dateRangeSelected" :options="dateRangeList" @input="test()"track-by="name" label="name" placeholder="Select one" :searchable="false" ></multiselect>
+                        <multiselect v-model="dateRangeSelected" :options="dateRangeList" track-by="name" label="name" placeholder="Select one" :searchable="false" ></multiselect>
                     </div>
                     <div class="field">
                         <label>Check worklog for:</label>
@@ -45,6 +45,7 @@
   import * as d3 from "d3";
   import Multiselect from 'vue-multiselect'
   import User from '../models/User.js'
+  import utils from '../services/utils.js'
 
   export default {
     components: { Multiselect },
@@ -234,25 +235,21 @@
         dateRangeList:[
           {
             "name": "yesterday",
-            "value": "-1d",
-            "targetDate": ""
+            "value": "-1d"
           },
           {
             "name": "last 7 days",
-            "value": "-7d",
-            "targetDate": ""
+            "value": "-7d"
           },
           {
             "name": "last 14 days",
-            "value": "-14d",
-            "targetDate": ""
+            "value": "-14d"
           }
         ],
         dateRangeSelected: [
           {
             "name": "yesterday",
-            "value": "-1d",
-            "targetDate": ""
+            "value": "-1d"
           }
         ],
         dataTest: [],
@@ -261,13 +258,16 @@
     },
     mounted () {
       this.fetchUser();
+      this.drawChart();
+      this.test2();
+      //this.test();
     },
     methods: {
-      test: function() {
-        var someDate = new Date();
-        var numberOfDaysToAdd = 6;
-        this.dateRangeSelected.targetDate = someDate.setDate(someDate.getDate() + numberOfDaysToAdd);
-        console.log(this.dateRangeSelected.targetDate);
+      test2: function() {
+        console.log("START");
+        var value = "-14d";
+        console.log(utils.getDates(new Date("2017-06-05"),null,parseFloat(value.replace(/[^-0-9]/g, ''))));
+        console.log("END");
       },
 
       fetchUser: function(username) {
@@ -280,6 +280,7 @@
 
       fetchWorklog: function(dateRange,worklogAuthor) {
         this.isLoading = true;
+        console.log(utils.getDates(new Date(),null,parseFloat(dateRange.value.replace(/[^-0-9]/g, ''))));
         var worklogAuthorList = [];
         for (var i=0; i<worklogAuthor.length; i++) {
           worklogAuthorList.push(worklogAuthor[i].key);
