@@ -76,7 +76,7 @@ export default {
   },
 
   getWorklog(context,dateRange,worklogAuthor) {
-    let jql = "worklogAuthor IN ({worklogAuthor}) AND updated >= {dateRange}";
+    let jql = "worklogAuthor IN ({worklogAuthor}) AND worklogDate >= {dateRange}";
     jql = dateRange ? jql.replace('{dateRange}',dateRange) : jql.replace('{dateRange}','-1d');
     jql = worklogAuthor ? jql.replace('{worklogAuthor}',worklogAuthor) : jql.replace('{worklogAuthor}','%');
 

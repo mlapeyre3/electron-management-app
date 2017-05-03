@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="ui container">
         <h3 class="ui header">
             Here you can manage project releases and related Git status
         </h3>

@@ -361,7 +361,6 @@
             .x(function(d) { return x(d.date); })
             .y(function(d) { return y(d.temperature); });
         /*
-
           var cities = data.map(function(d) {
             return {
               id: d.id,
