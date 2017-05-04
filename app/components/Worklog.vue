@@ -5,7 +5,7 @@
             <div class="field">
                 <div class="two fields">
                     <div class="six wide field">
-                        <label>Date Range</label>
+                        <label>Date Range:</label>
                         <multiselect v-model="dateRangeSelected" :options="dateRangeList" track-by="name" label="name" placeholder="Select one" :searchable="false" ></multiselect>
                     </div>
                     <div class="field">
@@ -246,30 +246,17 @@
             "value": "-14d"
           }
         ],
-        dateRangeSelected: [
-          {
-            "name": "yesterday",
-            "value": "-1d"
-          }
-        ],
-        dataTest: [],
+        dateRangeSelected: {
+          "name": "last 7 days",
+          "value": "-7d"
+        },
         isLoading: false
       }
     },
     mounted () {
       this.fetchUser();
-      this.drawChart();
-      this.test2();
-      //this.test();
     },
     methods: {
-      test2: function() {
-        console.log("START");
-        var value = "-14d";
-        console.log(utils.getDates(new Date("2017-06-05"),null,parseFloat(value.replace(/[^-0-9]/g, ''))));
-        console.log("END");
-      },
-
       fetchUser: function(username) {
         this.isLoading = true;
         Jira.getUser(this,username).then((response) => {
@@ -280,14 +267,16 @@
 
       fetchWorklog: function(dateRange,worklogAuthor) {
         this.isLoading = true;
-        console.log(utils.getDates(new Date(),null,parseFloat(dateRange.value.replace(/[^-0-9]/g, ''))));
+        dateRange["dates"] = utils.getDates(new Date(),null,parseFloat(dateRange.value.replace(/[^-0-9]/g, '')));
+
         var worklogAuthorList = [];
         for (var i=0; i<worklogAuthor.length; i++) {
           worklogAuthorList.push(worklogAuthor[i].key);
         }
+
         Jira.getWorklog(this,dateRange.value,worklogAuthorList).then((response) => {
           if(response.body.total > response.body.maxResults){
-            console.log("There are more items than maxReults");
+            console.log("There are more items than maxResults");
           }
           this.addUserWorklog(worklogAuthor,response.body.issues);
           this.isLoading = false;
