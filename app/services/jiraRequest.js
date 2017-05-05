@@ -9,6 +9,7 @@ const MY_FILTER = API_URL + '/my';
 const JQL_SEARCH = API_URL + '/search';
 const PROJECT_LIST = API_URL + '/project';
 const PROJECT_VERSIONS = API_URL +  '/project/{projectIdOrKey}/versions';
+const ISSUE_WORKLOG = API_URL + '/issue/{issueIdOrKey}/worklog'
 
 export default {
   getCurrentUser(context){
@@ -100,6 +101,18 @@ export default {
     };
 
     return this.jqlSearch(context,jqlConfig)
+  },
+
+  getIssueWorklog(context,issueKey) {
+    let options = {
+      url: ISSUE_WORKLOG.replace('{issueIdOrKey}', issueKey),
+      method: 'GET',
+      headers:
+          {
+            Authorization: 'Basic ' + Auth.getAuthBasic()
+          }
+    };
+    return context.$http(options)
   },
 
   getOver50Issues(context) {
