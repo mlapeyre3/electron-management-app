@@ -342,9 +342,12 @@
               for (let k=result.worklogs.length-1;k>=0;k--){
                 if (new Date(result.worklogs[k].started) < new Date(dateRange.targetDate)) {
                   result.worklogs.splice(k,1);
+                } else {
+                  //add worklog to user
                 }
               }
             }
+            console.log(results);
           })
           .catch((e) => {
             console.log("Huh, there is an error",e);
