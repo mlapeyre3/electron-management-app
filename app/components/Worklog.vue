@@ -19,7 +19,7 @@
                     </div>
                 </div>
             </div>
-            <div class="ui primary button" tabindex="0" @click="fetchWorklog(dateRangeSelected,userSelected)">
+            <div class="ui primary button" tabindex="0" @click="fetchWorklog(dateRangeSelected,userSelected)" v-bind:class="{ loading: isLoading }">
                 Compute Worklog
             </div>
         </form>
@@ -287,9 +287,9 @@
             console.log("There are more items than maxResults");
           }
 
-          this.addUserWorklog(dateRange,worklogAuthor, response.body.issues);
-          worklogAuthor = this.sumUserWorklogTimeline(worklogAuthor,"started","timeSpentSeconds");
-          this.prepareWorklogChart(dateRange,worklogAuthor);
+          this.fetchIssueWorklog(dateRange, worklogAuthor, response.body.issues);
+          //worklogAuthor = this.sumUserWorklogTimeline(worklogAuthor,"started","timeSpentSeconds");
+          //this.prepareWorklogChart(dateRange,worklogAuthor);
 
           this.isLoading = false;
         })
@@ -323,38 +323,33 @@
         }
       },
 
-      addUserWorklog2: function(userList,issueList) {
+      fetchIssueWorklog: function(dateRange, userList, issueList) {
+        var promises = [];
 
-        for (var i = 0; i < userList.length; i++) {
-          let newValue = userList[i];
-          newValue["worklogs"] = [];
-          for (var j = 0; j < issueList.length; j++) {
-            if (issueList[j].fields.worklog.total > 0) {
-              if (issueList[j].fields.worklog.total > issueList[j].fields.worklog.maxResults) {
-                console.log("There are more worklog items than maxResults");
-              }
-              for (var k = 0; k < issueList[j].fields.worklog.worklogs.length; k++) {
-                if (issueList[j].fields.worklog.worklogs[k].author.key === newValue.key) {
-                  newValue["worklogs"].push(issueList[j].fields.worklog.worklogs[k]);
-                } else {
-                }
-              }
-            } else {
-            }
-          }
-          this.$set(userList, i, newValue)
+        for(var i=0;i<issueList.length;i++) {
+          promises.push(Jira.getIssueWorklog(this, issueList[i].key).then((response) => {
+            return response.body;
+          }));
         }
 
-        return getAccessTokenPromise().then(access_token => {
-          list.push(personEmail);
-          return makeRequest(personEmail, access_token);
-        }).then(result => {
-          if (result.value.length > 0) {
-            return Promise.all(result.value.map(person => {
-              return loadReports(person.userPrincipalName, list);
-            }));
-          }
-        });
+        Promise.all(promises)
+          .then((results) => {
+            for(let i=0;i<results.length;i++){
+              let result = results[i];
+              if (result.total > result.maxResults) {
+                console.log("There are more items than maxResults");
+              }
+              for (let k=result.worklogs.length-1;k>=0;k--){
+                if (new Date(result.worklogs[k].started) < new Date(dateRange.targetDate)) {
+                  result.worklogs.splice(k,1);
+                }
+              }
+            }
+          })
+          .catch((e) => {
+            console.log("Huh, there is an error",e);
+          });
+
       },
 
       matchUserAuthor: function (element,) {
