@@ -27,7 +27,7 @@
             <thead>
             <tr>
                 <th>User</th>
-                <th>Worklog</th>
+                <th>WorklogTimeline</th>
             </tr>
             </thead>
             <tbody>
@@ -37,6 +37,26 @@
                 </td>
                 <td>
                     <div v-for="worklog in user.worklogTimeline">
+                        {{worklog.started}} - {{worklog.timeSpentSeconds/60/60}}
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <table class="ui very basic collapsing celled table">
+            <thead>
+            <tr>
+                <th>User</th>
+                <th>Worklog</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="user in userSelected">
+                <td>
+                    {{user.displayName}}
+                </td>
+                <td>
+                    <div v-for="worklog in user.worklogs">
                         {{worklog.started}} - {{worklog.timeSpentSeconds/60/60}}
                     </div>
                 </td>
@@ -325,6 +345,7 @@
 
       fetchIssueWorklog: function(dateRange, userList, issueList) {
         var promises = [];
+        var userNameList = userList.map(function (data) {return data.key});
 
         for(var i=0;i<issueList.length;i++) {
           promises.push(Jira.getIssueWorklog(this, issueList[i].key).then((response) => {
@@ -334,29 +355,38 @@
 
         Promise.all(promises)
           .then((results) => {
-            for(let i=0;i<results.length;i++){
-              let result = results[i];
+            for(let j=0;j<results.length;j++){
+              let result = results[j];
+
               if (result.total > result.maxResults) {
                 console.log("There are more items than maxResults");
               }
+
               for (let k=result.worklogs.length-1;k>=0;k--){
-                if (new Date(result.worklogs[k].started) < new Date(dateRange.targetDate)) {
-                  result.worklogs.splice(k,1);
+                if ((new Date(result.worklogs[k].started) > new Date(dateRange.targetDate))
+                  && (userNameList.some(function(data) {return data === result.worklogs[k].author.key}))) {
+                  for (let m=0;m<userList.length;m++){
+                    if (userList[m].key === result.worklogs[k].author.key) {
+                      this.addUserWorklog2(userList[m],result.worklogs[k]);
+                    }
+                  }
                 } else {
-                  //add worklog to user
+                  result.worklogs.splice(k,1);
                 }
               }
             }
             console.log(results);
+            console.log(this.userSelected)
           })
-          .catch((e) => {
-            console.log("Huh, there is an error",e);
-          });
+          .catch((e) => {console.log("Huh, there is an error",e);});
 
       },
 
-      matchUserAuthor: function (element,) {
-        return element >= 15;
+      addUserWorklog2: function(user,worklog) {
+        if(!user.hasOwnProperty('worklogs')){
+          user["worklogs"] = [];
+        }
+        user.worklogs.push(worklog);
       },
 
       sumUserWorklogTimeline: function(userList,key,value) {
