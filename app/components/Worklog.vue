@@ -43,26 +43,6 @@
             </tr>
             </tbody>
         </table>
-        <table class="ui very basic collapsing celled table">
-            <thead>
-            <tr>
-                <th>User</th>
-                <th>Worklog</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr v-for="user in userSelected">
-                <td>
-                    {{user.displayName}}
-                </td>
-                <td>
-                    <div v-for="worklog in user.worklogs">
-                        {{worklog.started}} - {{worklog.timeSpentSeconds/60/60}}
-                    </div>
-                </td>
-            </tr>
-            </tbody>
-        </table>
         <svg id="chart_worklog" width="960" height="500"></svg>
     </div>
 </template>
@@ -76,6 +56,7 @@
 
   export default {
     components: {Multiselect},
+
     data () {
       return {
         userList: [],
@@ -274,15 +255,17 @@
           }
         ],
         dateRangeSelected: {
-          "name": "last 14 days",
-          "value": "-14d"
+          "name": "last 7 days",
+          "value": "-7d"
         },
         isLoading: false
       }
     },
+
     mounted () {
       this.fetchUser();
     },
+
     methods: {
       fetchUser: function (username) {
         this.isLoading = true;
@@ -315,34 +298,6 @@
         })
       },
 
-      addUserWorklog: function (dateRange, userList, issueList) {
-        for (var i = 0; i < userList.length; i++) {
-          let newValue = userList[i];
-          newValue["worklogs"] = [];
-          for (var j = 0; j < issueList.length; j++) {
-            if (issueList[j].fields.worklog.total > 0) {
-              if (issueList[j].fields.worklog.total > issueList[j].fields.worklog.maxResults) {
-                console.log(issueList[j].key,"There are more worklog items than maxResults");
-              }
-              for (var k = 0; k < issueList[j].fields.worklog.worklogs.length; k++) {
-                if (issueList[j].fields.worklog.worklogs[k].author.key === newValue.key) {
-                  let started = new Date(issueList[j].fields.worklog.worklogs[k].started);
-                  if(started >= dateRange.targetDate) {
-                    newValue["worklogs"].push(issueList[j].fields.worklog.worklogs[k]);
-                  } else {}
-                } else {}
-              }
-            } else {}
-          }
-          for(var k=0; k<newValue.worklogs.length;k++) {
-            newValue.worklogs[k].created = new Date(newValue.worklogs[k].created).toDateString();
-            newValue.worklogs[k].started = new Date(newValue.worklogs[k].started).toDateString();
-            newValue.worklogs[k].updated = new Date(newValue.worklogs[k].updated).toDateString();
-          }
-          this.$set(userList, i, newValue)
-        }
-      },
-
       fetchIssueWorklog: function(dateRange, userList, issueList) {
         var promises = [];
         var userNameList = userList.map(function (data) {return data.key});
@@ -355,19 +310,19 @@
 
         Promise.all(promises)
           .then((results) => {
-            for(let j=0;j<results.length;j++){
+            for(let j=0;j<results.length;j++) {
               let result = results[j];
 
               if (result.total > result.maxResults) {
                 console.log("There are more items than maxResults");
               }
 
-              for (let k=result.worklogs.length-1;k>=0;k--){
+              for (let k=result.worklogs.length-1;k>=0;k--) {
                 if ((new Date(result.worklogs[k].started) > new Date(dateRange.targetDate))
                   && (userNameList.some(function(data) {return data === result.worklogs[k].author.key}))) {
                   for (let m=0;m<userList.length;m++){
                     if (userList[m].key === result.worklogs[k].author.key) {
-                      this.addUserWorklog2(userList[m],result.worklogs[k]);
+                      this.addUserWorklog(userList[m],result.worklogs[k]);
                     }
                   }
                 } else {
@@ -375,21 +330,24 @@
                 }
               }
             }
-            console.log(results);
-            console.log(this.userSelected)
+
+            userList = this.worklogToTimeline(userList,"started","timeSpentSeconds");
+            console.log(userList[0].worklogTimeline);
+            this.prepareWorklogChart(dateRange,userList);
           })
           .catch((e) => {console.log("Huh, there is an error",e);});
 
       },
 
-      addUserWorklog2: function(user,worklog) {
+      addUserWorklog: function(user,worklog) {
         if(!user.hasOwnProperty('worklogs')){
           user["worklogs"] = [];
         }
+        worklog.started = new Date(worklog.started).toDateString();
         user.worklogs.push(worklog);
       },
 
-      sumUserWorklogTimeline: function(userList,key,value) {
+      worklogToTimeline: function(userList,key,value) {
         for (var i=0; i<userList.length; i++) {
           let counts = userList[i].worklogs.reduce((prev, curr) => {
             let count = prev.get(curr[key]) || 0;
@@ -403,30 +361,32 @@
 
           userList[i]["worklogTimeline"] = reducedObjArr;
         }
-
+        //this.$forceUpdate();
         return userList;
       },
 
-      prepareWorklogChart: function (dateRange,worklogAuthor) {
-
-        worklogAuthor[0].worklogTimeline.sort(function(a,b) {return new Date(a.date) - new Date(b.date);});
+      prepareWorklogChart: function (dateRange,userList) {
 
         //var parseTime = d3.timeParse("%Y-%m-%dT%H:%M:%S.%L%Z");
         var parseTime = d3.timeParse("%a %b %d %Y");
-
+/*
         var tmp = [];
 
-        for (var i=0;i<worklogAuthor.length;i++) {
-          for (var k=0;k<worklogAuthor[i].worklogTimeline.length;k++) {
-            if (new Date(worklogAuthor[i].worklogTimeline[k].started) > new Date(dateRange.dates[k])) {
-              worklogAuthor[i].worklogTimeline.splice(k, 0, {date: "toto",timeSpent: null});
+        for (var i=0;i<userList.length;i++) {
+          for (var k=0;k<userList[i].worklogTimeline.length;k++) {
+            console.log(k);
+            if (new Date(userList[i].worklogTimeline[k].started) > new Date(dateRange.dates[k])) {
+              userList[i].worklogTimeline.splice(k, 0, {date: dateRange.dates[k].toDateString(), timeSpentSeconds: 0});
               tmp.push({started: dateRange.dates[k].toDateString(), timeSpentSeconds: null});
-            } else {tmp.push(worklogAuthor[i].worklogTimeline[k])}
+            } else {
+              tmp.push(userList[i].worklogTimeline[k])
+            }
           }
-          worklogAuthor[i].worklogTimeline = tmp.slice(0);
-        }
 
-        var chartData = worklogAuthor.map(function (data) {
+          userList[i].worklogTimeline = tmp.slice(0);
+        }
+*/
+        var chartData = userList.map(function (data) {
           return {
             id: data.displayName,
             values: data.worklogTimeline.map(function (d) {
