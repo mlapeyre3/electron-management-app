@@ -22,7 +22,7 @@
                     <input v-model="branchSelected">
                 </div>
             </div>
-            <div class="ui teal submit button" @click="fetchReleaseIssues(projectSelected,versionSelected)" v-bind:class="{ loading: isLoading }">
+            <div class="ui primary button" @click="fetchReleaseIssues(projectSelected,versionSelected)" v-bind:class="{ loading: isLoading }">
                 Search
             </div>
         </form>

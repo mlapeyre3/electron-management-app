@@ -162,6 +162,36 @@ export default {
     return this.jqlSearch(context,jqlConfig)
   },
 
+  getIssueChangelog(context, project, issue, dateRange) {
+    if (issue) {
+      var jql = "project = {projectIdOrKey} AND issue = {issueKey}".replace('{issueKey}', issue);
+    } else if (dateRange) {
+      var jql = "project = {projectIdOrKey} AND created >= {dateRange}".replace('{dateRange}', dateRange);
+    } else {
+      var jql = "project = {projectIdOrKey}";
+    }
+
+    jql = jql.replace('{projectIdOrKey}', project);
+
+    let jqlConfig = {
+      "jql": jql,
+      "startAt": 0,
+      "maxResults": 200,
+      "fields": [
+        "issuetype",
+        "priority",
+        "summary",
+        "status",
+        "assignee",
+        "reporter",
+        "changelog"
+      ],
+      "fieldsByKeys": false
+    };
+
+    return this.jqlSearch(context,jqlConfig)
+  },
+
   postComment(context, issueId, comment) {
     let commentConfig = {
       body: comment

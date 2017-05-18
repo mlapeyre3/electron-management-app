@@ -6,6 +6,7 @@
             <router-link :to="{name: 'dailyStandUp'}" class="item"><i class="checked calendar icon"></i>Daily Stand Up</router-link>
             <router-link :to="{name: 'release'}" class="item"><i class="ship icon"></i>Releases</router-link>
             <router-link :to="{name: 'worklog'}" class="item"><i class="hourglass end icon"></i>Worklog</router-link>
+            <router-link :to="{name: 'reopened'}" class="item"><i class="undo icon"></i>Reopened Analysis</router-link>
             <router-link :to="{name: 'login'}" class="item">Login</router-link>
         </div>
         <div class="pusher">
