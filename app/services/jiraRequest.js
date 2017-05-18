@@ -4,10 +4,12 @@ import Auth from './auth.js'
 //const API_URL = 'https://mathieulapeyre.atlassian.net/rest/api/2';
 const API_URL = 'https://mediaconnect.atlassian.net/rest/api/2';
 const CURRENT_USER = API_URL + '/myself';
+const SEARCH_USER = API_URL + '/user/search?username={username}&maxResults=200';
 const MY_FILTER = API_URL + '/my';
 const JQL_SEARCH = API_URL + '/search';
 const PROJECT_LIST = API_URL + '/project';
 const PROJECT_VERSIONS = API_URL +  '/project/{projectIdOrKey}/versions';
+const ISSUE_WORKLOG = API_URL + '/issue/{issueIdOrKey}/worklog'
 
 export default {
   getCurrentUser(context){
@@ -18,6 +20,22 @@ export default {
         {
           Authorization: 'Basic ' + Auth.getAuthBasic()
         }
+    };
+    return context.$http(options)
+  },
+
+  getUser(context,username) {
+    if(!username){
+      username = '%';
+    }
+
+    let options = {
+      url: SEARCH_USER.replace('{username}', username),
+      method: 'GET',
+      headers:
+          {
+            Authorization: 'Basic ' + Auth.getAuthBasic()
+          }
     };
     return context.$http(options)
   },
@@ -54,6 +72,45 @@ export default {
         {
           Authorization: 'Basic ' + Auth.getAuthBasic()
         }
+    };
+    return context.$http(options)
+  },
+
+  getWorklog(context,dateRange,worklogAuthor) {
+    let jql = "worklogAuthor IN ({worklogAuthor}) AND worklogDate >= {dateRange}";
+    jql = dateRange ? jql.replace('{dateRange}',dateRange) : jql.replace('{dateRange}','-1d');
+    jql = worklogAuthor ? jql.replace('{worklogAuthor}',worklogAuthor) : jql.replace('{worklogAuthor}','%');
+
+    let jqlConfig = {
+      "jql": jql,
+      "startAt": 0,
+      "maxResults": 200,
+      "fields": [
+        "issuetype",
+        "priority",
+        "summary",
+        "status",
+        "assignee",
+        "workratio",
+        "timespent",
+        "timeoriginalestimate",
+        "fixVersions",
+        "worklog"
+      ],
+      "fieldsByKeys": false
+    };
+
+    return this.jqlSearch(context,jqlConfig)
+  },
+
+  getIssueWorklog(context,issueKey) {
+    let options = {
+      url: ISSUE_WORKLOG.replace('{issueIdOrKey}', issueKey),
+      method: 'GET',
+      headers:
+          {
+            Authorization: 'Basic ' + Auth.getAuthBasic()
+          }
     };
     return context.$http(options)
   },
