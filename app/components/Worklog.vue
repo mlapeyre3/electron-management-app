@@ -369,13 +369,14 @@
 
         //var parseTime = d3.timeParse("%Y-%m-%dT%H:%M:%S.%L%Z");
         var parseTime = d3.timeParse("%a %b %d %Y");
-/*
+
+        console.log(userList[0].worklogTimeline);
+
         var tmp = [];
 
         for (var i=0;i<userList.length;i++) {
           for (var k=0;k<userList[i].worklogTimeline.length;k++) {
-            console.log(k);
-            if (new Date(userList[i].worklogTimeline[k].started) > new Date(dateRange.dates[k])) {
+            if(dateRange.dates.some(function(data) {return data !== new Date(userList[i].worklogTimeline[k].started)})) {
               userList[i].worklogTimeline.splice(k, 0, {date: dateRange.dates[k].toDateString(), timeSpentSeconds: 0});
               tmp.push({started: dateRange.dates[k].toDateString(), timeSpentSeconds: null});
             } else {
@@ -385,7 +386,7 @@
 
           userList[i].worklogTimeline = tmp.slice(0);
         }
-*/
+
         var chartData = userList.map(function (data) {
           return {
             id: data.displayName,
@@ -510,7 +511,7 @@
             .text(function (d) {
               return d.id;
             });
-      }
+      },
     }
   }
 </script>
