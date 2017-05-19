@@ -20,7 +20,34 @@
                 Analyse reopened transitions
             </div>
         </form>
-        {{changeLogByReporter}}
+        <table class="ui very basic collapsing celled table">
+            <thead>
+            <tr>
+                <th>Reporter</th>
+                <th>Issues</th>
+                <th>Total Issues</th>
+                <th>Total Reopened Transitions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="item in changeLogByReporter">
+                <td>
+                    {{item.reporter.displayName}}
+                </td>
+                <td>
+                    <div v-for="issue in item.issues">
+                        {{issue.key}} - {{issue.summary}}
+                    </div>
+                </td>
+                <td>
+                    {{item.issues.length}}
+                </td>
+                <td>
+                    {{item.changelog.transitions.reopened}}
+                </td>
+            </tr>
+            </tbody>
+        </table>
     </div>
 </template>
 
@@ -85,6 +112,7 @@
 
       getIssueChangelog: function (projectSelected, dateRangeSelected) {
         this.isLoading = true;
+        this.changeLogByReporter = [];
         Jira.getIssueChangelog(this,projectSelected.key,null,dateRangeSelected.value).then((response) => {
           this.fetchIssueChangelog(response.body);
           this.isLoading = false
@@ -96,42 +124,43 @@
 
         for(let i=0;i<issues.length;i++) {
           let issue = issues[i];
-          if(this.changeLogByReporter.length == 0) {
-            let entry = {reporter: issue.fields.reporter, totalIssues: 1, changelog: {transitions: {reopened: 0}}};
+          let index = this.changeLogByReporter.findIndex(function(d) {
+            return d.reporter.key === issue.fields.reporter.key
+          });
+
+          if (index == -1) {
+            let reopenedTransitions = this.findReopenedTransitions(issue.changelog.histories);
+            let entry = {reporter: issue.fields.reporter, totalIssues: 1,
+              issues: [{key: issue.key, summary: issue.fields.summary}], changelog: {transitions: {reopened: reopenedTransitions}}};
             this.changeLogByReporter.push(entry);
-          } else if (!this.changeLogByReporter.some(function(d) {return d.reporter.key === issue.fields.reporter.key})) {
-            console.log(issue);
+          } else {
+            let reopenedTransitions = this.findReopenedTransitions(issue.changelog.histories);
+            this.changeLogByReporter[index].changelog.transitions.reopened += reopenedTransitions;
+
+            let entry = {key: issue.key, summary: issue.fields.summary};
+            this.changeLogByReporter[index].totalIssues += 1;
+            this.changeLogByReporter[index].issues.push(entry);
+
           }
         }
-/*
-        for issue in data["issues"]:
-	#Search for issues by reporter
-        if 'reporter' not in issue["fields"]:
-        error = True
 
-        key = issue["fields"]["reporter"]['displayName']
-        if key not in jsonIssue:
-        jsonIssue[key] = 1
-        else:
-        jsonIssue[key] += 1
+        console.log(this.changeLogByReporter);
+      },
 
-	#Search for reopened by reporter
-        for history in issue["changelog"]["histories"]:
-        for item in history["items"]:
-        if item["field"] == "status" and item["toString"] == "Reopened" or item["toString"] == "Re-opened":
-        reopenedNb += 1
+      findReopenedTransitions: function (histories) {
+        var reopenedTransitions = 0;
 
-        if 'reporter' not in issue["fields"]:
-        error = True
-        continue
+        for(let i=0;i<histories.length;i++) {
+          let history = histories[i];
+          for(let j=0;j<history.items.length;j++) {
+            let item = history.items[j];
+            if(item.toString === "Reopened" || item.toString === "Re-opened") {
+              reopenedTransitions ++;
+            }
+          }
+        }
 
-        key = issue["fields"]["reporter"]['displayName']
-        if key not in jsonReporter:
-        jsonReporter[key] = 1
-        else:
-        jsonReporter[key] += 1
-
-        this.isLoading = false*/
+        return reopenedTransitions;
       }
     }
   }

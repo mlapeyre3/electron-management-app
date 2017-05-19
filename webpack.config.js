@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack')
 
 module.exports = {
   // This is the "main" file which should include all other modules
@@ -31,6 +32,13 @@ module.exports = {
       }
     ]
   },
+  plugins: [
+    new webpack.DefinePlugin({
+      'process.env': {
+        NODE_ENV: '"development"'
+      }
+    })
+  ],
   resolve: {
     alias: {
       'vue$': 'vue/dist/vue.common.js',

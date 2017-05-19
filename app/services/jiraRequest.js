@@ -184,6 +184,8 @@ export default {
         "status",
         "assignee",
         "reporter",
+      ],
+      "expand": [
         "changelog"
       ],
       "fieldsByKeys": false
