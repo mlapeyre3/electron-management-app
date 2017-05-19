@@ -115,17 +115,17 @@
         this.changeLogByReporter = [];
         Jira.getIssueChangelog(this,projectSelected.key,null,dateRangeSelected.value).then((response) => {
           this.fetchIssueChangelog(response.body);
-          this.isLoading = false
+          this.isLoading = false;
         })
       },
 
       fetchIssueChangelog: function (data) {
-        var issues = data.issues;
+        let issues = data.issues;
 
         for(let i=0;i<issues.length;i++) {
           let issue = issues[i];
           let index = this.changeLogByReporter.findIndex(function(d) {
-            return d.reporter.key === issue.fields.reporter.key
+            return d.reporter.key === issue.fields.reporter.key;
           });
 
           if (index == -1) {
@@ -148,7 +148,7 @@
       },
 
       findReopenedTransitions: function (histories) {
-        var reopenedTransitions = 0;
+        let reopenedTransitions = 0;
 
         for(let i=0;i<histories.length;i++) {
           let history = histories[i];
